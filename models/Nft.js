@@ -16,11 +16,10 @@ const nftSchema = new Schema({
   gloves: String,
   bruisingOrBlood: String,
   image: String,
-
   user:{
     type: Schema.Types.ObjectId,
     ref: 'User'
-}
+  }
 })
 
 module.exports = model('Nft', nftSchema); 

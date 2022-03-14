@@ -17,6 +17,7 @@ module.exports = {
     Query: {
         ...postResolvers.Query,
         ...nftResolvers.Query,
+        ...userResolvers.Query,
     },
 
     Mutation:{

@@ -86,6 +86,9 @@ module.exports = gql`
         getPost(postID: ID!): Post,
         getNfts:[Nft],
         getNft(nftID: ID!): Nft,
+        getUser(userID: ID!): User,
+        getAllUsers: [User],
+        getUserNfts: [Nft]
     },
 
     type Mutation{
