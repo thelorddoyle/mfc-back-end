@@ -126,7 +126,20 @@ module.exports = {
             }
         },
 
-
+        async updateUser(_, {user}){
+            try {
+                const {id} = user
+                const currentUser = await User.findById(id);
+                //TODO: put in validation later. 
+                
+                Object.assign(currentUser, user);
+                currentUser.save();
+                return currentUser;
+            } catch (error) {
+                throw new Error('error');
+                
+            }
+        },
 
         async addAmount(_, { amount }, context) {
 
