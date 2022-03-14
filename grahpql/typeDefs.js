@@ -75,12 +75,18 @@ module.exports = gql`
         amountInWallet: Float
     }, 
 
+    type Result{
+      deletedCount: Int!  
+    },
+
     type Query{
-        getNfts:[Nft],
-        getNft(nftID: ID!): Nft,
         getUser(userID: ID!): User,
         getAllUsers: [User],
         getUserNfts: [Nft],
+        
+        getNfts:[Nft],
+        getNft(nftID: ID!): Nft,
+
         getTournaments: [Tournament]
         getTournament(tournamentId: ID!): Tournament
     },
@@ -90,11 +96,16 @@ module.exports = gql`
         login(username: String!, password: String!): User!,
         addAmount(amount: Float!): User!,
         removeAmount(amount: Float!): User!,
+        updateUser(user: UserInput): User!,
+        deleteUser(userId: ID!): Result!,
+        
         createNft(createNft: CreateNft): Nft!,
         mintNft(userId: ID!): Nft!,
+
         createTournament(createTournament: CreateTournament): Tournament
-        updateUser(user: UserInput): User!
     }
     
 
 `
+
+//TODO: figure out if you can have no response or if it is an error;
