@@ -1,5 +1,5 @@
 const Tournament = require('../../models/Tournament')
-const Nft = require('../../models/Nft');
+const Fight = require('../../models/Fight');
 const User = require('../../models/User');
 const checkAuth = require('../../middleware/checkAuth');
 const { AuthenticationError } = require('apollo-server');
@@ -8,9 +8,9 @@ module.exports =  {
 
     Query: {
     
-        async getTournaments() {
+        async getFights() {
             try {
-                const result = await Tournament.find();
+                const result = await Fight.find();
                 return result
             } catch (error) {
                 throw new Error(error);
@@ -35,18 +35,19 @@ module.exports =  {
     },
 
     Mutation: {
-
-        async createTournament(_, {createTournament}, context){
+        async createFight(_, {createFight}, context){
+            
             try{
-              const tournament = await Tournament({...createTournament})
-              await tournament.save();
-              return tournament;
+              const fight = await new Fight({...createFight})
+              fight.winner = createFight.winnerId;
+              fight.loser = createFight.loserId;
+              await fight.save();
+              console.log(await fight.populate('winner loser'));
+              return fight;
             } catch(err){
               throw new Error(err);
             }
           },
-    
-
-    },
+        },
 
 }
