@@ -31,14 +31,41 @@ module.exports = gql`
         image: String!
     }
 
+    type Fight{
+        id: ID!,
+        winnerId: String!,
+        loserId: String!,
+        fightReplay: [fightMove]!,
+        tournamentIndex: Int!
+    }
+
     type Tournament {
         startDate: Date,
         status: String
+    }   
+
+
+    type fightMove{
+        ownerId: String!,
+        body: String!,
+    }
+
+    input CreateFightMove{
+        ownerId: String!,
+        body: String!,
     }
 
     input CreateTournament{
         startDate: Date,
         status: String
+    }
+
+    input CreateFight{
+        id: ID!,
+        winnerId: String!,
+        loserId: String!,
+        fightReplay: [CreateFightMove]!,
+        tournamentIndex: Int!
     }
 
     input CreateNft{
@@ -73,8 +100,9 @@ module.exports = gql`
         getUser(userID: ID!): User,
         getAllUsers: [User],
         getUserNfts: [Nft],
-        getTournaments: [Tournament]
+        getTournaments: [Tournament],
         getTournament(tournamentId: ID!): Tournament
+        getFights: [Fight]
     },
 
     type Mutation{
@@ -84,7 +112,8 @@ module.exports = gql`
         removeAmount(amount: Float!): User!,
         createNft(createNft: CreateNft): Nft!,
         mintNft(userId: ID!): Nft!,
-        createTournament(createTournament: CreateTournament): Tournament
+        createTournament(createTournament: CreateTournament): Tournament!, 
+        createFight(createFight: CreateFight): Fight!
     }
     
 
