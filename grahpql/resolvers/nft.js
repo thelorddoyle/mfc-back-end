@@ -30,8 +30,7 @@ module.exports =  {
             } catch (error) {
                 throw new Error('Nft not found')
             }
-        }
-
+        },
 
     },
 

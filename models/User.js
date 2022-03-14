@@ -5,8 +5,7 @@ const userSchema = new Schema({
     password: String,
     email: String,
     createdAt: Date,
-    amountInWallet: { type: Number, default: 0 }
-
+    amountInWallet: { type: Number, default: 0 },
 })
 
 module.exports = model('User', userSchema); 

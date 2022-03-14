@@ -1,6 +1,7 @@
 const { model, Schema } = require('mongoose');
+
 const nftSchema = new Schema({
-  userId: String, 
+  userId: String,
   background: String,
   bodyType: String,
   jewellery: String, 
