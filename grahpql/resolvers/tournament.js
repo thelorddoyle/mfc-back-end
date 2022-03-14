@@ -38,8 +38,6 @@ module.exports =  {
 
         async createTournament(_, {createTournament}, context){
 
-            console.log('hello')
-
             console.log(createTournament)
 
             try{
