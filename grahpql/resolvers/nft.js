@@ -1,6 +1,7 @@
 //RESOLVERS
 //For each query or mutuation there is a resolver, which processes any sort of logic 
 const Nft = require('../../models/Nft');
+const User = require('../../models/User');
 const checkAuth = require('../../middleware/checkAuth');
 const { AuthenticationError } = require('apollo-server');
 
@@ -40,7 +41,6 @@ module.exports =  {
           try{
             const nft = await Nft({...createNft})
             await nft.save();
-
             return nft;
           } catch(err){
             throw new Error(err);
@@ -48,13 +48,10 @@ module.exports =  {
         },
         
         async mintNft(_, {userId}, context){
-
           try{
-
             const nft = await Nft.findOne({userId: null});
-            nft.userId = userId;
+            nft.user = userId;
             await nft.save();
-
             return nft;
           } catch(err){
             throw new Error(err);

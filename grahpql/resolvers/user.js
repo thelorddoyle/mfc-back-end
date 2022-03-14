@@ -3,7 +3,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const {UserInputError} = require('apollo-server');
 const {validateUser, validateLogin } = require('../../helpers/validators');
-const checkAuth = require('../../middleware/checkAuth')
+const checkAuth = require('../../middleware/checkAuth');
+const Nft = require('../../models/Nft');
  
 
 function generateToken(user){
@@ -42,6 +43,16 @@ module.exports = {
                 throw new Error(err)
             }
         },
+
+        async  getUserNfts(_,__,context){
+            try {
+                const { id } = checkAuth(context);
+                const nfts = await Nft.find({user : id}).populate('user')
+                return nfts
+            } catch (error) {
+                throw new Error(error)
+            }
+        }
     },
     
     //Mutations allow you to modify server-side data, and it also returns an object based on the operation performed. 
