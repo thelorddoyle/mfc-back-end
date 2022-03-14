@@ -31,6 +31,16 @@ module.exports = gql`
         image: String!
     }
 
+    type Tournament {
+        startDate: Date,
+        status: String
+    }
+
+    input CreateTournament{
+        startDate: Date,
+        status: String
+    }
+
     input CreateNft{
         userId: ID,
         background: String!,
@@ -69,9 +79,10 @@ module.exports = gql`
         register(registerInput: RegisterInput): User!,
         login(username: String!, password: String!): User!,
         addAmount(amount: Float!): User!,
-        removeAmount(amount: Float!): User!
-        createNft(createNft: CreateNft): Nft!
-        mintNft(userId: ID!): Nft!
+        removeAmount(amount: Float!): User!,
+        createNft(createNft: CreateNft): Nft!,
+        mintNft(userId: ID!): Nft!,
+        createTournament(createTournament: CreateTournament): Tournament
     }
     
 
