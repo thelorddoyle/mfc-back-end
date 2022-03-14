@@ -130,7 +130,7 @@ module.exports = {
             try {
                 const {id} = user
                 const currentUser = await User.findById(id);
-                //TODO: put in validation later. 
+                //TODO: put in validation later. (EMAIL)
                 
                 Object.assign(currentUser, user);
                 currentUser.save();
@@ -138,6 +138,23 @@ module.exports = {
             } catch (error) {
                 throw new Error('error');
                 
+            }
+        },
+
+        async deleteUser(_, {userId}){
+            //TODO: add validation checking if admin account. & the ability to delete own account. 
+            try {
+                const user = await User.findById(userId);
+                console.log(user);
+
+                if(user){
+                    const result = await User.deleteOne({ _id: userId });
+                    return result;
+                } else{
+                    throw new Error('A user with that Id does not exist');
+                }
+            } catch (error) {
+                throw new Error(error);
             }
         },
 
