@@ -74,6 +74,7 @@ module.exports = gql`
         getAllUsers: [User],
         getUserNfts: [Nft],
         getTournaments: [Tournament]
+        getTournament(tournamentId: ID!): Tournament
     },
 
     type Mutation{

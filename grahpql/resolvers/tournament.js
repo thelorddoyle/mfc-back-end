@@ -17,6 +17,21 @@ module.exports =  {
             }
         },
 
+        async getTournament(_,{tournamentId}) {
+
+            try {
+                const result =  await Tournament.findById(tournamentId);
+                if (result){
+                    return result
+                }else{
+                    throw new Error('Tournament not found')
+                }
+                
+            } catch (error) {
+                throw new Error('Tournament not found')
+            }
+        },
+
     },
 
     Mutation: {
