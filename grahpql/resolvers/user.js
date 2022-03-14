@@ -29,6 +29,19 @@ module.exports = {
                 throw new Error(err)
             }
         },
+        
+        async getAllUsers(_){
+            try {
+                const user = await  User.find();
+                if(user){
+                    return user;
+                } else{
+                    throw new Error('Did not find a user');
+                }
+            } catch (err){
+                throw new Error(err)
+            }
+        },
     },
     
     //Mutations allow you to modify server-side data, and it also returns an object based on the operation performed. 
