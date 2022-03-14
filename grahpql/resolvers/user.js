@@ -15,6 +15,22 @@ function generateToken(user){
 }
 
 module.exports = {
+    Query: {
+        //NOTE: we can probably just use the auth context. 
+        async getUser(_, {userID}){
+            try {
+                const user = await  User.findById(userID);
+                if(user){
+                    return user;
+                } else{
+                    throw new Error('Did not find a user');
+                }
+            } catch (err){
+                throw new Error(err)
+            }
+        },
+    },
+    
     //Mutations allow you to modify server-side data, and it also returns an object based on the operation performed. 
     // It can be used to insert, update, or delete data.
     Mutation : {
@@ -85,6 +101,8 @@ module.exports = {
                 token
             }
         },
+
+
 
         async addAmount(_, { amount }, context) {
 
