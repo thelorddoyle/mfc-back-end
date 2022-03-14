@@ -8,7 +8,7 @@ module.exports = {
     Query: {
         ...nftResolvers.Query,
         ...userResolvers.Query,
-        // ...tournamentResolvers.Query,
+        ...tournamentResolvers.Query,
     },
 
     Mutation:{

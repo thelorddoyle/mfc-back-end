@@ -7,7 +7,15 @@ const { AuthenticationError } = require('apollo-server');
 module.exports =  {
 
     Query: {
-        
+    
+        async getTournaments() {
+            try {
+                const result = await Tournament.find();
+                return result
+            } catch (error) {
+                throw new Error(error);
+            }
+        },
 
     },
 
