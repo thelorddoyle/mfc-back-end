@@ -36,6 +36,14 @@ module.exports = gql`
         status: String
     }
 
+    input UserInput { #User model type
+        id: ID!, 
+        email: String
+        token: String
+        username: String
+        createdAt: Date
+    },
+
     input CreateTournament{
         startDate: Date,
         status: String
@@ -85,6 +93,7 @@ module.exports = gql`
         createNft(createNft: CreateNft): Nft!,
         mintNft(userId: ID!): Nft!,
         createTournament(createTournament: CreateTournament): Tournament
+        updateUser(user: UserInput): User!
     }
     
 
