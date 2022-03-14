@@ -35,6 +35,43 @@ module.exports = gql`
         createdAt: Date!
         amountInWallet: Float
     },
+
+    type Nft {
+        id: ID!,
+        userId: ID,
+        background: String!,
+        bodyType: String!,
+        jewellery: String!, 
+        tattoos: String!,
+        hairStyle: String!,
+        eyeColor: String!,
+        facialHair: String!,
+        clothing: String!, 
+        shorts: String!,
+        mouth: String!,
+        headgear: String!,
+        gloves: String!,
+        bruisingOrBlood: String!,
+        image: String!
+    }
+
+    input CreateNft{
+        userId: ID,
+        background: String!,
+        bodyType: String!,
+        jewellery: String!, 
+        tattoos: String!,
+        hairStyle: String!,
+        eyeColor: String!,
+        facialHair: String!,
+        clothing: String!, 
+        shorts: String!,
+        mouth: String!,
+        headgear: String!,
+        gloves: String!,
+        bruisingOrBlood: String!,
+        image: String!
+    }
     
     input RegisterInput{ #Diferent "type" for handling form data 
         username: String!,
@@ -47,6 +84,8 @@ module.exports = gql`
     type Query{
         getPosts:[Post],
         getPost(postID: ID!): Post,
+        getNfts:[Nft],
+        getNft(nftID: ID!): Nft,
     },
 
     type Mutation{
@@ -59,6 +98,9 @@ module.exports = gql`
         likePost(postID: String!): Post!,
         addAmount(amount: Float!): User!,
         removeAmount(amount: Float!): User!
+        createNft(createNft: CreateNft): Nft!
+        mintNft(userId: ID!): Nft!
     }
+    
 
 `

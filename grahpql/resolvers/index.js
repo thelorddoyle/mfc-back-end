@@ -1,6 +1,8 @@
 const postResolvers = require('./post');
 const userResolvers = require('./user');
 const commentResolvers = require('./comment');
+const nftResolvers = require('./nft');
+
 
 module.exports = {
 
@@ -13,13 +15,15 @@ module.exports = {
         }
     },
     Query: {
-        ...postResolvers.Query
+        ...postResolvers.Query,
+        ...nftResolvers.Query,
     },
 
     Mutation:{
         ...userResolvers.Mutation,
         ...postResolvers.Mutation,
         ...commentResolvers.Mutation,
+        ...nftResolvers.Mutation,
     }
 
 }
