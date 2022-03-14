@@ -35,20 +35,19 @@ module.exports =  {
     },
 
     Mutation: {
-
-        // async createFight(_, , context){
-
-        //     console.log(createFight)
-        //     try{
-        //       const fight = await Fight({...createTournament})
-        //       await fight.save();
-        //       return fight;
-        //     } catch(err){
-        //       throw new Error(err);
-        //     }
-        //   },
-    
-
-    },
+        async createFight(_, {createFight}, context){
+            
+            try{
+              const fight = await new Fight({...createFight})
+              fight.winner = createFight.winnerId;
+              fight.loser = createFight.loserId;
+              await fight.save();
+              console.log(await fight.populate('winner loser'));
+              return fight;
+            } catch(err){
+              throw new Error(err);
+            }
+          },
+        },
 
 }

@@ -61,7 +61,6 @@ module.exports = gql`
     }
 
     input CreateFight{
-        id: ID!,
         winnerId: String!,
         loserId: String!,
         fightReplay: [CreateFightMove]!,
