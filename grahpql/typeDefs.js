@@ -109,6 +109,10 @@ module.exports = gql`
         getUser(userID: ID!): User,
         getAllUsers: [User],
         getUserNfts: [Nft],
+
+        getNfts: [Nft]!,
+        getNft(nftID: ID!): Nft!,
+
         getTournaments: [Tournament],
         getTournament(tournamentId: ID!): Tournament
         getFights: [Fight]
@@ -124,6 +128,7 @@ module.exports = gql`
         
         createNft(createNft: CreateNft): Nft!,
         mintNft(userId: ID!): Nft!,
+
         createTournament(createTournament: CreateTournament): Tournament!, 
         createFight(createFight: CreateFight): Fight!
     }

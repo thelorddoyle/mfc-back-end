@@ -38,11 +38,11 @@ module.exports =  {
         async createFight(_, {createFight}, context){
             
             try{
-              const fight = await new Fight({...createFight})
-              fight.winner = createFight.winnerId;
-              fight.loser = createFight.loserId;
+              const fight = await new Fight({...createFight, winner: createFight.winnerId, loser: createFight.loserId})
+
               await fight.save();
               console.log(await fight.populate('winner loser'));
+              
               return fight;
             } catch(err){
               throw new Error(err);
