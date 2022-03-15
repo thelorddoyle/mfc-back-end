@@ -3,17 +3,7 @@ const Fight = require('../../models/Fight');
 const User = require('../../models/User');
 const checkAuth = require('../../middleware/checkAuth');
 const { AuthenticationError } = require('apollo-server');
-const { getCurrentTournament } = require('./tournament');
 
-
-const organiseFight = async function(){
-    //TODO: Make this work for the championship fight
-    //const  getTourney  = await getCurrentTournament();
-    const  fight = await Fight.findOne({ nfts: { $size: 1 } }) || await Fight.findOne({ nfts: { $size: 0 } })
-    console.log(fight);
-     
-} 
-organiseFight(); 
 module.exports =  {
 
     Query: {
