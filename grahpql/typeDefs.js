@@ -41,10 +41,11 @@ module.exports = gql`
     }
 
     type Tournament {
+        id: ID!,
         startDate: Date,
-        status: String
+        status: String,
+        fights: [Fight]
     }   
-
 
     type fightMove{
         ownerId: String!,
@@ -76,6 +77,13 @@ module.exports = gql`
     input CreateTournament{
         startDate: Date,
         status: String
+    }
+
+    input TournamentInput{
+        id: ID!,
+        startDate: Date,
+        status: String,
+        fights:[FightInput]
     }
 
     input CreateFight{
@@ -143,9 +151,12 @@ module.exports = gql`
         mintNft(userId: ID!): Nft!,
 
         createTournament(createTournament: CreateTournament): Tournament!, 
+        updateTournament(tournament: TournamentInput): Tournament!  
+
 
         createFight(createFight: CreateFight): Fight!,
         updateFight(fight: FightInput!): Fight
+
     }
     
 

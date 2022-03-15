@@ -45,6 +45,21 @@ x
               throw new Error(err);
             }
           },
+        
+          async updateTournament(_, {tournament}){
+            try {
+                const {id} = tournament
+                const currentTournament = await Tournament.findById(id);
+                //TODO: put in validation later. (EMAIL)
+                
+                Object.assign(currentTournament, tournament);
+                currentTournament.save();
+                return currentTournament;
+            } catch (error) {
+                throw new Error('error');
+                
+            }
+        },
     
 
     },

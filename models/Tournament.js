@@ -10,6 +10,9 @@ const tournamentSchema = new Schema({
         // completed: immediately the entire tournament is resolved & results are ready to be demonstrated
         // TODO: making assiciation with fights
         enum: ['pending', 'ready', 'completed'],
+        fights:[{
+            fightId: String
+        }],
         default: 'pending'
     },
 })
