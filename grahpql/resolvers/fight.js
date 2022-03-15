@@ -32,19 +32,6 @@ module.exports =  {
     },
 
     Mutation: {
-        async createFight(_, {createFight}, context){
-            console.log("creating fight mutation fight", createFight);
-            try{
-              const fight = await new Fight({...createFight, winner: createFight.winnerId, loser: createFight.loserId})
-
-              await fight.save();
-              console.log(await fight.populate('winner loser'));
-              
-              return fight;
-            } catch(err){
-              throw new Error(err);
-            }
-          },
 
           async updateFight(_, {fight}){
             try {
