@@ -2,7 +2,7 @@ const gql = require('graphql-tag');
 //Graph-QL Queries
 module.exports = gql`
     scalar Date,
-        
+    
     type User { #User model type
         id: ID!, 
         email: String!
@@ -35,9 +35,14 @@ module.exports = gql`
         id: ID!,
         winnerId: String!,
         loserId: String!,
-        fightReplay: [fightMove]!,
+        fightReplay: [FightMove]!,
         tournamentIndex: Int!,
         nfts: [Nft]
+    }
+
+    type FightMove{
+        ownerId: String!,
+        body: String!,
     }
 
     type Tournament {
@@ -47,15 +52,10 @@ module.exports = gql`
         fights: [Fight]
     }   
 
-    type fightMove{
-        ownerId: String!,
-        body: String!,
-    }
+    type Result{ # from deleting 
+      deletedCount: Int!  
+    },
 
-    input CreateFightMove{
-        ownerId: String!,
-        body: String!,
-    }
 
     input UserInput { #User model type
         id: ID!, 
@@ -65,27 +65,13 @@ module.exports = gql`
         createdAt: Date
     },
 
-    input FightInput{
-        id: ID!,
-        winnerId: String,
-        loserId: String,
-        fightReplay: [CreateFightMove],
-        tournamentIndex: Int,
-        nfts: [CreateNft]
-    }
-
-    input CreateTournament{
-        startDate: Date,
-        status: String
-    }
-
-    input TournamentInput{
-        id: ID!,
-        startDate: Date,
-        status: String,
-        fights:[FightInput]
-    }
-
+    input RegisterInput{ #Diferent "type" for handling form data 
+        username: String!,
+        password: String!,
+        confirmPassword: String!,
+        email: String!,
+        amountInWallet: Float
+    }, 
 
     input CreateNft{
         id: ID,
@@ -105,38 +91,68 @@ module.exports = gql`
         bruisingOrBlood: String,
         image: String
     }
-    
-    input RegisterInput{ #Diferent "type" for handling form data 
-        username: String!,
-        password: String!,
-        confirmPassword: String!,
-        email: String!,
-        amountInWallet: Float
-    }, 
 
-    type Result{
-      deletedCount: Int!  
-    },
+    input FightInput{
+        id: ID!,
+        winnerId: String,
+        loserId: String,
+        fightReplay: [CreateFightMove],
+        tournamentIndex: Int,
+        nfts: [CreateNft]
+    }
+    
+    input CreateFightMove{
+        ownerId: String!,
+        body: String!,
+    }
+
+    input CreateTournament{
+        startDate: Date,
+        status: String
+    }
+
+    input TournamentInput{
+        id: ID!,
+        startDate: Date,
+        status: String,
+        fights:[FightInput]
+    }
 
     type Query{
+        
+        ################
+        ###   USER   ###
+        ################
         getUser(userID: ID!): User,
         getAllUsers: [User],
         getUserNfts: [Nft],
        
-
+        ################
+        ###    NFT   ###
+        ################
         getNfts: [Nft]!,
         getNft(nftID: ID!): Nft!,
 
+        ################
+        ###  FIGHT   ###
+        ################
+        getFights: [Fight],
+        getFight(fightId: ID!): Fight,
+
+        ################
+        ###TOURNAMENT###
+        ################
         getTournaments: [Tournament],
         getTournament(tournamentId: ID!): Tournament!,
         getCurrentTournament: Tournament!
 
-
-        getFights: [Fight],
-        getFight(fightId: ID!): Fight,
     },
 
     type Mutation{
+
+        ################
+        ###   USER   ###
+        ################
         register(registerInput: RegisterInput): User!,
         login(username: String!, password: String!): User!,
         addAmount(amount: Float!): User!,
@@ -144,18 +160,23 @@ module.exports = gql`
         updateUser(user: UserInput): User!,
         deleteUser(userId: ID!): Result!,
         
+        ################
+        ###    NFT   ###
+        ################
         createNft(createNft: CreateNft): Nft!,
         mintNft(userId: ID!): Nft!,
 
+        ################
+        ###  FIGHT   ###
+        ################
+        updateFight(fight: FightInput!): Fight
+
+        ################
+        ###TOURNAMENT###
+        ################
         createTournament(createTournament: CreateTournament): Tournament!, 
         updateTournament(tournament: TournamentInput): Tournament!  
 
-
-        updateFight(fight: FightInput!): Fight
-
     }
-    
 
 `
-
-//TODO: figure out if you can have no response or if it is an error;
