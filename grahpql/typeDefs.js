@@ -31,14 +31,48 @@ module.exports = gql`
         image: String!
     }
 
+    type Fight{
+        id: ID!,
+        winnerId: String!,
+        loserId: String!,
+        fightReplay: [fightMove]!,
+        tournamentIndex: Int!
+    }
+
     type Tournament {
         startDate: Date,
         status: String
+    }   
+
+
+    type fightMove{
+        ownerId: String!,
+        body: String!,
     }
+
+    input CreateFightMove{
+        ownerId: String!,
+        body: String!,
+    }
+
+    input UserInput { #User model type
+        id: ID!, 
+        email: String
+        token: String
+        username: String
+        createdAt: Date
+    },
 
     input CreateTournament{
         startDate: Date,
         status: String
+    }
+
+    input CreateFight{
+        winnerId: String!,
+        loserId: String!,
+        fightReplay: [CreateFightMove]!,
+        tournamentIndex: Int!
     }
 
     input CreateNft{
@@ -67,14 +101,21 @@ module.exports = gql`
         amountInWallet: Float
     }, 
 
+    type Result{
+      deletedCount: Int!  
+    },
+
     type Query{
-        getNfts:[Nft],
-        getNft(nftID: ID!): Nft,
         getUser(userID: ID!): User,
         getAllUsers: [User],
         getUserNfts: [Nft],
-        getTournaments: [Tournament]
+
+        getNfts: [Nft]!,
+        getNft(nftID: ID!): Nft!,
+
+        getTournaments: [Tournament],
         getTournament(tournamentId: ID!): Tournament
+        getFights: [Fight]
     },
 
     type Mutation{
@@ -82,10 +123,17 @@ module.exports = gql`
         login(username: String!, password: String!): User!,
         addAmount(amount: Float!): User!,
         removeAmount(amount: Float!): User!,
+        updateUser(user: UserInput): User!,
+        deleteUser(userId: ID!): Result!,
+        
         createNft(createNft: CreateNft): Nft!,
         mintNft(userId: ID!): Nft!,
-        createTournament(createTournament: CreateTournament): Tournament
+
+        createTournament(createTournament: CreateTournament): Tournament!, 
+        createFight(createFight: CreateFight): Fight!
     }
     
 
 `
+
+//TODO: figure out if you can have no response or if it is an error;
