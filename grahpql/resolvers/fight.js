@@ -17,21 +17,18 @@ module.exports =  {
             }
         },
 
-        async getTournament(_,{tournamentId}) {
-
+        async getFight(_, {fightId}) {
             try {
-                const result =  await Tournament.findById(tournamentId);
-                if (result){
-                    return result
-                }else{
-                    throw new Error('Tournament not found')
+                const result = await Fight.findById(fightId);
+                if(result){
+                    return result;
+                } else {
+                    throw new Error('Fight not Found')
                 }
-                
             } catch (error) {
-                throw new Error('Tournament not found')
+                throw new Error(error);
             }
         },
-
     },
 
     Mutation: {

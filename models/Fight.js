@@ -17,6 +17,8 @@ const fightSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'User'
     }
+
+    //TODO: Make association with Tournament
 })
 
 module.exports = model('Fight', fightSchema); 

@@ -114,8 +114,9 @@ module.exports = gql`
         getNft(nftID: ID!): Nft!,
 
         getTournaments: [Tournament],
-        getTournament(tournamentId: ID!): Tournament
-        getFights: [Fight]
+        getTournament(tournamentId: ID!): Tournament,
+        getFights: [Fight],
+        getFight(fightId: ID!): Fight,
     },
 
     type Mutation{

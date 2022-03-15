@@ -18,7 +18,7 @@ module.exports =  {
         },
 
         async getTournament(_,{tournamentId}) {
-
+x
             try {
                 const result =  await Tournament.findById(tournamentId);
                 if (result){
