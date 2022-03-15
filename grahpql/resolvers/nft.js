@@ -51,17 +51,18 @@ module.exports =  {
         async mintNft(_, {userId}, context){
           try{
             const nft = await Nft.findOne({user: { $exists: false }});
-            nft.user = userId;
-            await nft.save();
+            if(nft) {
+              nft.user = userId; // this saves a reference to the User with the 'userId'
 
-            // we need to find the first tournament AND then add the nft to the first availble fight. 
+              await nft.save();
+              await nft.populate('user'); // adds the user reference obj
+  
+              return nft;
+            } else {
+              throw new Error('We are out of NFTs');
+            }
+            
 
-            // IN NFT MAKE METHOD THAT GETS TOURNAMENT(not full) ==> FIGHT (not full) ==> ADD THE NFT 
-            // const tournament = getCurrentTournament();
-            debugger;
-            // console.log('tournament', tournament);
-
-            return nft;
           } catch(err){
             throw new Error(err);
           }
