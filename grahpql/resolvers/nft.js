@@ -12,7 +12,8 @@ const organiseFight = async function(nftId){
     //const  getTourney  = await getCurrentTournament();
     try {
       const  fight = await Fight.findOne({ nfts: { $size: 1 } }) || await Fight.findOne({ nfts: { $size: 0 } })
-      //TODO: Instead of throwing new error we need to create a new tournament
+      //TODO: Instead of throwing new error we need to  trigger a new tournament and change 
+      //current tournament to "ACTIVE"
       if(!fight) throw new UserInputError('Tournament is full')
       fight.nfts.push(nftId)
       fight.save(); 
