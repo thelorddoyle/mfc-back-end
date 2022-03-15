@@ -51,6 +51,7 @@ module.exports =  {
         async mintNft(_, {userId}, context){
           try{
             const nft = await Nft.findOne({user: { $exists: false }});
+            console.log(nft)
             nft.user = userId;
             await nft.save();
 
