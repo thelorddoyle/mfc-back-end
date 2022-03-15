@@ -36,7 +36,8 @@ module.exports = gql`
         winnerId: String!,
         loserId: String!,
         fightReplay: [fightMove]!,
-        tournamentIndex: Int!
+        tournamentIndex: Int!,
+        nfts: [Nft]
     }
 
     type Tournament {
@@ -68,7 +69,8 @@ module.exports = gql`
         winnerId: String,
         loserId: String,
         fightReplay: [CreateFightMove],
-        tournamentIndex: Int
+        tournamentIndex: Int,
+        nfts: [CreateNft]
     }
 
     input CreateTournament{
@@ -81,24 +83,26 @@ module.exports = gql`
         loserId: String!,
         fightReplay: [CreateFightMove]!,
         tournamentIndex: Int!,
+        nfts: [CreateNft]
     }
 
     input CreateNft{
+        id: ID,
         userId: ID,
-        background: String!,
-        bodyType: String!,
-        jewellery: String!, 
-        tattoos: String!,
-        hairStyle: String!,
-        eyeColor: String!,
-        facialHair: String!,
-        clothing: String!, 
-        shorts: String!,
-        mouth: String!,
-        headgear: String!,
-        gloves: String!,
-        bruisingOrBlood: String!,
-        image: String!
+        background: String,
+        bodyType: String,
+        jewellery: String, 
+        tattoos: String,
+        hairStyle: String,
+        eyeColor: String,
+        facialHair: String,
+        clothing: String, 
+        shorts: String,
+        mouth: String,
+        headgear: String,
+        gloves: String,
+        bruisingOrBlood: String,
+        image: String
     }
     
     input RegisterInput{ #Diferent "type" for handling form data 

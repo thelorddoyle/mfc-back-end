@@ -1,6 +1,9 @@
 const { model, Schema } = require('mongoose');
 
 const fightSchema = new Schema({
+    nfts: [{
+        id: String
+    }],
     winnerId: String,
     loserId: String,
     fightReplay: [],

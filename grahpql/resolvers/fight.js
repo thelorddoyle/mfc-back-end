@@ -48,11 +48,13 @@ module.exports =  {
 
           async updateFight(_, {fight}){
             try {
+
                 const {id} = fight
                 const currentFight = await Fight.findById(id);
                 
                 Object.assign(currentFight, fight);
                 currentFight.save();
+
                 return currentFight;
             } catch (error) {
                 throw new Error('error');
