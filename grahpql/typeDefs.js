@@ -86,13 +86,6 @@ module.exports = gql`
         fights:[FightInput]
     }
 
-    input CreateFight{
-        winnerId: String!,
-        loserId: String!,
-        fightReplay: [CreateFightMove]!,
-        tournamentIndex: Int!,
-        nfts: [CreateNft]
-    }
 
     input CreateNft{
         id: ID,
@@ -158,7 +151,6 @@ module.exports = gql`
         updateTournament(tournament: TournamentInput): Tournament!  
 
 
-        createFight(createFight: CreateFight): Fight!,
         updateFight(fight: FightInput!): Fight
 
     }
