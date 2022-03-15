@@ -38,8 +38,6 @@ module.exports =  {
 
         async createTournament(_, {createTournament}, context){
 
-            console.log(createTournament)
-
             try{
               const tournament = await Tournament({...createTournament})
               await tournament.save();
