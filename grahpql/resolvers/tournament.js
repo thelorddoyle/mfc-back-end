@@ -9,6 +9,7 @@ const  createFight = async function (createFight){
     try{
       const fight = await new Fight({...createFight})
       await fight.save();
+      console.log(fight);
       return fight;
     } catch(err){
       throw new Error(err);
@@ -64,20 +65,25 @@ module.exports =  {
         async createTournament(_, {createTournament}, context){
             try{
                 //Create tournament object
-                const tournament = await Tournament({...createTournament})
+                const tournament = await new Tournament({...createTournament})
                 const fightsArray = [];
 
                 //We create the first two empty fights
-                for (let i = 0; i < 2; i++) {
-                        const generateFight = await createFight({
-                            fightReplay: [],
-                            tournamentIndex: i,
-                            nfts: []
-                        })
+                for (let i = 0; i < 3; i++) {
+                    const generateFight = await createFight({
+                        fightReplay: [],
+                        tournamentIndex: i,
+                        nfts: []
+                    })
+                    console.log('generateFight result from calling the fucntion', generateFight);
                     fightsArray.push(generateFight._id)
                 }
+
+                console.log('fights Arrays lozza kiss yummi', fightsArray)
                 //We include the new 2 fights in the created tournament
-                tournament.fights = [...fightsArray];
+
+                tournament.fights.push(...fightsArray);
+                console.log("tournament before saving it", tournament);
                 await tournament.save();
                 return tournament;
             } catch(err){
