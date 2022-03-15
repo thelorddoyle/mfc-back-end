@@ -129,12 +129,16 @@ module.exports = gql`
         getUser(userID: ID!): User,
         getAllUsers: [User],
         getUserNfts: [Nft],
+       
 
         getNfts: [Nft]!,
         getNft(nftID: ID!): Nft!,
 
         getTournaments: [Tournament],
-        getTournament(tournamentId: ID!): Tournament,
+        getTournament(tournamentId: ID!): Tournament!,
+        getCurrentTournament: Tournament!
+
+
         getFights: [Fight],
         getFight(fightId: ID!): Fight,
     },

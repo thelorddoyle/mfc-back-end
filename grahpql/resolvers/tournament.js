@@ -4,8 +4,13 @@ const User = require('../../models/User');
 const checkAuth = require('../../middleware/checkAuth');
 const { AuthenticationError } = require('apollo-server');
 
-module.exports =  {
 
+// const generateFights = function(torunament){
+//     console.log(toruname)
+// }
+
+
+module.exports =  {
     Query: {
     
         async getTournaments() {
@@ -14,6 +19,22 @@ module.exports =  {
                 return result
             } catch (error) {
                 throw new Error(error);
+            }
+        },
+
+
+        async getCurrentTournament(){
+            try {
+                const result =  await Tournament.findOne({status: "pending"});
+                console.log(result);
+                if (result){
+                    return result
+                }else{
+                    throw new Error('Tournament not found')
+                }
+                
+            } catch (error) {
+                throw new Error('Tournament not found')
             }
         },
 
