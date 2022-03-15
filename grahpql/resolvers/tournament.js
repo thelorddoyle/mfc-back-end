@@ -5,18 +5,34 @@ const { AuthenticationError } = require('apollo-server');
 
 
 
-const  createFight = async function (createFight){
+const createFight = async function (createFight){
     try{
-      const fight = await new Fight({...createFight})
-      await fight.save();
-      console.log(fight);
-      return fight;
+        const fight = await new Fight({...createFight})
+        await fight.save();
+        console.log(fight);
+        return fight;
     } catch(err){
-      throw new Error(err);
+        throw new Error(err);
     }
-  };
+};
+
+const getCurrentTournament = async function() {
+    try {
+        const result =  await Tournament.findOne({status: "pending"});
+        if (result){
+            return result
+        }else{
+            throw new Error('Tournament not found')
+        }
+        
+    } catch (error) {
+        throw new Error('Tournament not found')
+    }
+}
+
 
 module.exports =  {
+    getCurrentTournament,
     Query: {
     
         async getTournaments() {
@@ -30,17 +46,7 @@ module.exports =  {
 
 
         async getCurrentTournament(){
-            try {
-                const result =  await Tournament.findOne({status: "pending"});
-                if (result){
-                    return result
-                }else{
-                    throw new Error('Tournament not found')
-                }
-                
-            } catch (error) {
-                throw new Error('Tournament not found')
-            }
+            return getCurrentTournament(); 
         },
 
         async getTournament(_,{tournamentId}) {
@@ -100,8 +106,6 @@ module.exports =  {
                 throw new Error('error');
             }
         },
-    
-
     },
 
 }

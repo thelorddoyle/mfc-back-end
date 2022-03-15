@@ -3,6 +3,10 @@ const Fight = require('../../models/Fight');
 const User = require('../../models/User');
 const checkAuth = require('../../middleware/checkAuth');
 const { AuthenticationError } = require('apollo-server');
+const { getCurrentTournament } = require('./tournament');
+
+
+
 
 module.exports =  {
 

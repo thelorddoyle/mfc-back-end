@@ -4,6 +4,7 @@ const Nft = require('../../models/Nft');
 const User = require('../../models/User');
 const checkAuth = require('../../middleware/checkAuth');
 const { AuthenticationError } = require('apollo-server');
+const { getCurrentTournament } = require('./tournament');
 
 
 module.exports =  {
@@ -40,6 +41,7 @@ module.exports =  {
           try{
             const nft = await Nft({...createNft})
             await nft.save();
+
             return nft;
           } catch(err){
             throw new Error(err);
@@ -48,9 +50,17 @@ module.exports =  {
         
         async mintNft(_, {userId}, context){
           try{
-            const nft = await Nft.findOne({userId: null});
+            const nft = await Nft.findOne({user: { $exists: false }});
             nft.user = userId;
             await nft.save();
+
+            // we need to find the first tournament AND then add the nft to the first availble fight. 
+
+            // IN NFT MAKE METHOD THAT GETS TOURNAMENT(not full) ==> FIGHT (not full) ==> ADD THE NFT 
+            // const tournament = getCurrentTournament();
+            debugger;
+            // console.log('tournament', tournament);
+
             return nft;
           } catch(err){
             throw new Error(err);
