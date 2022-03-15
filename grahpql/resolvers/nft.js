@@ -1,11 +1,28 @@
 //RESOLVERS
 //For each query or mutuation there is a resolver, which processes any sort of logic 
 const Nft = require('../../models/Nft');
-const User = require('../../models/User');
+const Fight = require('../../models/Fight');
 const checkAuth = require('../../middleware/checkAuth');
 const { AuthenticationError } = require('apollo-server');
 const { getCurrentTournament } = require('./tournament');
+const { UserInputError } = require('apollo-server')
+ 
 
+const organiseFight = async function(nftId){
+    //const  getTourney  = await getCurrentTournament();
+    try {
+      const  fight = await Fight.findOne({ nfts: { $size: 1 } }) || await Fight.findOne({ nfts: { $size: 0 } })
+      //TODO: Instead of throwing new error we need to  trigger a new tournament and change 
+      //current tournament to "ACTIVE"
+      if(!fight) throw new UserInputError('Tournament is full')
+      fight.nfts.push(nftId)
+      fight.save(); 
+    } catch (error) {
+      throw new UserInputError(error)
+    }
+      
+} 
+organiseFight('62305a5fce72d28cb91f5343'); 
 
 module.exports =  {
 
@@ -51,18 +68,17 @@ module.exports =  {
         async mintNft(_, {userId}, context){
           try{
             const nft = await Nft.findOne({user: { $exists: false }});
-            console.log(nft)
-            nft.user = userId;
-            await nft.save();
+            if(nft) {
+              nft.user = userId; // this saves a reference to the User with the 'userId'
+              await nft.save();
+              await nft.populate('user'); // adds the user reference obj
+              //organiseFight(nft)
+              return nft;
+            } else {
+              throw new Error('We are out of NFTs');
+            }
+            
 
-            // we need to find the first tournament AND then add the nft to the first availble fight. 
-
-            // IN NFT MAKE METHOD THAT GETS TOURNAMENT(not full) ==> FIGHT (not full) ==> ADD THE NFT 
-            // const tournament = getCurrentTournament();
-            debugger;
-            // console.log('tournament', tournament);
-
-            return nft;
           } catch(err){
             throw new Error(err);
           }

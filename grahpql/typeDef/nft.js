@@ -3,8 +3,9 @@ const gql = require('graphql-tag');
 module.exports = gql`
 
     type Nft {
+
         id: ID!,
-        userId: ID,
+        user: User,
         background: String!,
         bodyType: String!,
         jewellery: String!, 
@@ -18,12 +19,12 @@ module.exports = gql`
         headgear: String!,
         gloves: String!,
         bruisingOrBlood: String!,
-        image: String!
+        image: String!,
+        
     }
 
     input CreateNft{
         id: ID,
-        userId: ID,
         background: String,
         bodyType: String,
         jewellery: String, 

@@ -53,5 +53,6 @@ module.exports = gql`
 		removeAmount(amount: Float!): User!,
 		updateUser(user: UserInput): User!,
 		deleteUser(userId: ID!): Result!
+        
 	}
 `
