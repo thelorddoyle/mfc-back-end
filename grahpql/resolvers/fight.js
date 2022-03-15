@@ -33,7 +33,7 @@ module.exports =  {
 
     Mutation: {
         async createFight(_, {createFight}, context){
-            
+            console.log("creating fight mutation fight", createFight);
             try{
               const fight = await new Fight({...createFight, winner: createFight.winnerId, loser: createFight.loserId})
 

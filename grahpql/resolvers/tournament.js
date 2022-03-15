@@ -1,14 +1,19 @@
 const Tournament = require('../../models/Tournament')
-const Nft = require('../../models/Nft');
-const User = require('../../models/User');
+const Fight = require('../../models/Fight')
 const checkAuth = require('../../middleware/checkAuth');
 const { AuthenticationError } = require('apollo-server');
 
 
-// const generateFights = function(torunament){
-//     console.log(toruname)
-// }
 
+const  createFight = async function (createFight){
+    try{
+      const fight = await new Fight({...createFight})
+      await fight.save();
+      return fight;
+    } catch(err){
+      throw new Error(err);
+    }
+  };
 
 module.exports =  {
     Query: {
@@ -26,7 +31,6 @@ module.exports =  {
         async getCurrentTournament(){
             try {
                 const result =  await Tournament.findOne({status: "pending"});
-                console.log(result);
                 if (result){
                     return result
                 }else{
@@ -59,11 +63,25 @@ module.exports =  {
 
         async createTournament(_, {createTournament}, context){
             try{
-              const tournament = await Tournament({...createTournament})
-              await tournament.save();
-              return tournament;
+                //Create tournament object
+                const tournament = await Tournament({...createTournament})
+                const fightsArray = [];
+
+                //We create the first two empty fights
+                for (let i = 0; i < 2; i++) {
+                        const generateFight = await createFight({
+                            fightReplay: [],
+                            tournamentIndex: i,
+                            nfts: []
+                        })
+                    fightsArray.push(generateFight._id)
+                }
+                //We include the new 2 fights in the created tournament
+                tournament.fights = [...fightsArray];
+                await tournament.save();
+                return tournament;
             } catch(err){
-              throw new Error(err);
+                throw new Error(err);
             }
           },
         
