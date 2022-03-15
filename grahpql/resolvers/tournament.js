@@ -75,16 +75,12 @@ module.exports =  {
                         tournamentIndex: i,
                         nfts: []
                     })
-                    console.log('generateFight result from calling the fucntion', generateFight);
                     fightsArray.push(generateFight._id)
                 }
 
-                console.log('fights Arrays lozza kiss yummi', fightsArray)
-                //We include the new 2 fights in the created tournament
-
                 tournament.fights.push(...fightsArray);
-                console.log("tournament before saving it", tournament);
                 await tournament.save();
+
                 return tournament;
             } catch(err){
                 throw new Error(err);
@@ -102,7 +98,6 @@ module.exports =  {
                 return currentTournament;
             } catch (error) {
                 throw new Error('error');
-                
             }
         },
     
