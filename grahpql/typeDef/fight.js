@@ -1,7 +1,6 @@
 const gql = require('graphql-tag');
 
 module.exports = gql`
-    scalar Date,
 
     type Fight{
         id: ID!,
@@ -41,10 +40,7 @@ module.exports = gql`
    },
 
    type Mutation{
-
-        ################
-        ###  FIGHT   ###
-        ################
+       
         updateFight(fight: FightInput!): Fight
 
     }
