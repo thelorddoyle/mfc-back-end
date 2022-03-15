@@ -1,12 +1,14 @@
 const { ApolloServer } = require('apollo-server');
 const db = require('./config/db');
-const typeDefs  = require('./grahpql/typeDefs');
-const userDefs  = require('./grahpql/typeDef/user');
 const resolvers  = require('./grahpql/resolvers/index');
+const userDefs  = require('./grahpql/typeDef/user');
+const nftDefs  = require('./grahpql/typeDef/nft');
+const fightDefs  = require('./grahpql/typeDef/fight');
+const tournamentDefs  = require('./grahpql/typeDef/tournament');
 
 
 const server = new ApolloServer({ 
-    typeDefs: [typeDefs, userDefs],
+    typeDefs: [userDefs, nftDefs, fightDefs, tournamentDefs],
     resolvers,
     context: ({ req }) =>({req})
 })

@@ -1,5 +1,5 @@
 const gql = require('graphql-tag');
-//Graph-QL Queries
+
 module.exports = gql`
     scalar Date,
     
@@ -12,15 +12,24 @@ module.exports = gql`
         amountInWallet: Float
     },
 
+    type Result{ # from deleting 
+
+        deletedCount: Int!  
+      
+    },
+
     input UserInput { #User model type
+    
         id: ID!, 
         email: String
         token: String
         username: String
         createdAt: Date
+        
     },
 
     input RegisterInput{ #Diferent "type" for handling form data 
+    
         username: String!,
         password: String!,
         confirmPassword: String!,
@@ -35,7 +44,6 @@ module.exports = gql`
         getUserNfts: [Nft],
 		
 	}
-	
 
     type Mutation{
 
