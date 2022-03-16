@@ -1,9 +1,6 @@
 const { model, Schema } = require('mongoose');
 
 const fightSchema = new Schema({
-    nfts: [{
-        id: String
-    }],
     winnerId: String,
     loserId: String,
     fightReplay: [],
@@ -19,7 +16,11 @@ const fightSchema = new Schema({
     loser: {
         type: Schema.Types.ObjectId,
         ref: 'User'
-    }
+    },
+    nfts: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Nft'
+    }],
 
     //TODO: Make association with Tournament
 })

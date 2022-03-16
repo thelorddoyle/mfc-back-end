@@ -10,7 +10,7 @@ module.exports =  {
     
         async getFights() {
             try {
-                const result = await Fight.find();
+                const result = await Fight.find().populate('nfts');
                 return result
             } catch (error) {
                 throw new Error(error);
