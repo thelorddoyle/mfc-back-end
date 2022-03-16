@@ -1,7 +1,9 @@
+const db = require('../config/db')
+
 let db; // store the DB connection object here
-const MongoClient = require('mongodb').MongoClient;
+
 MongoClient.connect(
-    'mongodb://127.0.0.1:27017/', // URL to reach the server
+
     {}, // options object
     (err, client) => {
         // Check for errors
