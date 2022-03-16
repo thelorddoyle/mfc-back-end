@@ -77,9 +77,8 @@ const putNftIntoAvailibleFight = async function (nftId) {
 
 		throw new UserInputError(error);
 	}
-		
 };
-// putNftIntoAvailibleFight('62305a5fce72d28cb91f5343');
+
 
 module.exports = {
 	Query: {
