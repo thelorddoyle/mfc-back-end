@@ -43,7 +43,8 @@ const putNftIntoAvailibleFight = async function (nftId) {
                 return roundNo === 1 ? length < 2 : length === 1
 
             })
-
+            firstFight.nfts.push(nftId);
+            firstFight.save();
         }
 
         // initially calls the function that gets us our starting point
@@ -83,28 +84,25 @@ const putNftIntoAvailibleFight = async function (nftId) {
         }
 		
 		if (!firstFight){ // when 
-			// throw new UserInputError('Tournament is full');
+			throw new UserInputError('Tournament is full');
 		} 
 		//TODO: Instead of throwing new error we need to  trigger a new tournament and change
-		// firstFight.nfts.push(nftId);
-		// firstFight.save();
+
 
         // now use the tournament index of tournament in firstFight
         // 3 - roundNumber of firstFight = the number of loops that need to be made
         // beginning at tournament (firstFight round + 1), loop through x times
         // insert this NFT in to the first available fight
 
-
-		const  tournaments = await getCurrentTournament();
+		const tournaments = await getCurrentTournament();
 		await tournaments.populate('fights');
-		
-		// console.log('tournaments', tournaments);
+
 		
 	} catch (error) {
 		throw new UserInputError(error);
 	}
 };
-putNftIntoAvailibleFight('62305a5fce72d28cb91f5343');
+// putNftIntoAvailibleFight('62305a5fce72d28cb91f5343');
 
 module.exports = {
 	Query: {
