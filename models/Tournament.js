@@ -21,6 +21,8 @@ const tournamentSchema = new Schema({
             ref: 'Fight'
         }
     ],
+
+    round: Number
 })
 
 module.exports = model('Tournament', tournamentSchema); 

@@ -68,7 +68,7 @@ module.exports =  {
 
     Mutation: {
 
-        async createTournament(_, {createTournament}, context){
+        async createTournament (_, {createTournament}, context){
             try{
                 //Create tournament object
                 const tournament = await new Tournament({...createTournament})
