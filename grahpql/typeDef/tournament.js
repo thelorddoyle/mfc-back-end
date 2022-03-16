@@ -1,25 +1,28 @@
 const gql = require('graphql-tag');
 
-module.exports = gql`
-    scalar Date,
+module.exports = gql `
+    scalar Date
 
     type Tournament {
         id: ID!,
         startDate: Date,
         status: String,
-        fights: [Fight]
+        fights: [Fight],
+        round: Int!
     }   
 
     input CreateTournament{
         startDate: Date,
-        status: String
+        status: String,
+        round: Int!
     }
 
     input TournamentInput{
         id: ID!,
         startDate: Date,
         status: String,
-        fights:[FightInput]
+        fights:[FightInput],
+        round: Int!
     }
 
     type Query{

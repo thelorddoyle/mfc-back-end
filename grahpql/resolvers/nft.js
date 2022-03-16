@@ -7,24 +7,50 @@ const { AuthenticationError } = require('apollo-server');
 const { getCurrentTournament } = require('./tournament');
 const { UserInputError } = require('apollo-server');
 
-const organiseFight = async function (nftId) {
-  const  getTourney  = await getCurrentTournament();
-  console.log('torueny', await getTourney.populate('fights'));
-//   try {
-// 		const fight =
-// 		(await Fight.findOne({ nfts: { $size: 1 } })) ||
-// 		(await Fight.findOne({ nfts: { $size: 0 } }));
-// 		//TODO: Instead of throwing new error we need to  trigger a new tournament and change
-// 		//current tournament to 'ACTIVE'
-// 		if (!fight) throw new UserInputError('Tournament is full');
-// 		fight.nfts.push(nftId);
-// 		fight.save();
+const putNftIntoAvailibleFight = async function (nftId) {
+	
+	//check if any fight is empty if not then make a new
+	try {
+		const  tournament  = await getCurrentTournament();
+		await tournament.populate('fights');
 
-// 	} catch (error) {
-// 		throw new UserInputError(error);
-// 	}
- };
-organiseFight('62305a5fce72d28cb91f5343');
+		// finds first fight that has empty slot IF it is the last slot in tournament then change tournament.status to "ready"
+		const firstFight = tournament.fights.find((fight, index) => { 
+			const length = fight.nfts.length;
+			
+			if(index === 1 && length ===1) {
+				tournament.status = "ready";
+				tournament.save();
+			}
+
+			return length < 2;			
+		})
+
+		console.log('fight', firstFight);
+
+		// const fight = 
+		// (await Fight.findOne({ nfts: { $size: 1 } })) ||
+		// (await Fight.findOne({ nfts: { $size: 0 } }));
+		//current tournament to 'PENDING'
+		
+		if (!firstFight){ // when 
+			throw new UserInputError('Tournament is full');
+		} 
+		//TODO: Instead of throwing new error we need to  trigger a new tournament and change
+		firstFight.nfts.push(nftId);
+		firstFight.save();
+
+
+		const  tournaments  = await getCurrentTournament();
+		await tournaments.populate('fights');
+		
+		console.log('tournaments', tournaments);
+		
+	} catch (error) {
+		throw new UserInputError(error);
+	}
+};
+// putNftIntoAvailibleFight('62305a5fce72d28cb91f5343');
 
 module.exports = {
 	Query: {
@@ -72,6 +98,7 @@ module.exports = {
 					await nft.save();
 					await nft.populate('user'); // adds the user reference obj
 					
+					putNftIntoAvailibleFight(nft.id);
 					return nft;
 				} else {
 					throw new Error('We are out of NFTs');
