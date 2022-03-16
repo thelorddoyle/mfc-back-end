@@ -36,7 +36,8 @@ module.exports = gql `
     type Mutation{
 
         createTournament(createTournament: CreateTournament): Tournament!, 
-        updateTournament(tournament: TournamentInput): Tournament!  
+        updateTournament(tournament: TournamentInput): Tournament!,
+        resolveTournament(tournamentId: ID!): Tournament!
 
     }
 

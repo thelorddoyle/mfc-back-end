@@ -30,9 +30,7 @@ const findFirstFight = async (tournament, nftId) => {
 			break;
 		}
 	}
-	
 }
-
 
 const putNftIntoAvailibleFight = async function (nftId) {
 	//check if any fight is empty if not then make a new
@@ -64,7 +62,6 @@ const putNftIntoAvailibleFight = async function (nftId) {
             if (roundNumberTracker < 10) {
                 roundNumberTracker++
             }
-
         }
 		
 		// if (!firstFight){ // when 
