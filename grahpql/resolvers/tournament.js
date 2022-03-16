@@ -30,8 +30,33 @@ const getCurrentTournament = async function() {
     }
 }
 
+const createTournament = async  function(createTournament){
+    try{
+        //Create tournament object
+        const tournament = await new Tournament({...createTournament})
+        const fightsArray = [];
+
+        //We create the first two empty fights
+        for (let i = 0; i < 3; i++) {
+            const generateFight = await createFight({
+                fightReplay: [],
+                tournamentIndex: i,
+                nfts: []
+            })
+            fightsArray.push(generateFight._id)
+        }
+
+        tournament.fights.push(...fightsArray);
+        await tournament.save();
+
+        return tournament;
+    } catch(err){
+        throw new Error(err);
+    }
+  };
 
 module.exports =  {
+    createTournament,
     getCurrentTournament,
     Query: {
     

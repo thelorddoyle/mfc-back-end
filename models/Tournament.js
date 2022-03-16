@@ -2,6 +2,7 @@ const { model, Schema } = require('mongoose');
 
 const tournamentSchema = new Schema({
     startDate: Date,
+    round: Number,
     status: {
         type: String,
         // status descriptions:
@@ -22,7 +23,6 @@ const tournamentSchema = new Schema({
         }
     ],
 
-    round: Number
 })
 
 module.exports = model('Tournament', tournamentSchema); 
