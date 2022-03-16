@@ -4,6 +4,8 @@ const { createMachine, actions, interpret } = XState;
 
 function generateFightResults (firstNft, secondNft, victoriousNft) {
 
+    // console.log(firstNft, secondNft, victoriousNft)
+    
     const fight = {
         attack: {
             strike: {
@@ -1028,6 +1030,6 @@ function generateFightResults (firstNft, secondNft, victoriousNft) {
 
 }
 
-generateFightResults('Lozza', 'Jesus', 'Lozza')
+// generateFightResults('Lozza', 'Jesus', 'Lozza')
 
 module.exports = {generateFightResults}

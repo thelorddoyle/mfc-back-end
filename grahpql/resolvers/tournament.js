@@ -2,8 +2,27 @@ const Tournament = require('../../models/Tournament')
 const Fight = require('../../models/Fight')
 const checkAuth = require('../../middleware/checkAuth');
 const { AuthenticationError } = require('apollo-server');
+const {generateFightResults} = require('../../helpers/fightReplayGenerator')
 
+// helper function that just randomly chooses between 2 nfts as to who wins
+const getWinner = function (nft1, nft2) {
+    if (Math.random() < 5) {
+        return nft1
+    } else {
+        return nft2
+    }
+}
 
+// 
+const getFightReplay = function (nft1, nft2, winner) {
+
+    try{
+        const fightReplay = generateFightResults(nft1, nft2, winner)
+        return fightReplay
+    } catch (err) {
+        throw new Error(err)
+    }
+}
 
 const createFight = async function (createFight){
     try{
@@ -131,6 +150,35 @@ module.exports =  {
                 throw new Error('error');
             }
         },
+
+        async resolveTournament(_, {tournamentId}) {
+            try {
+                const currentTournament = await Tournament.findById(tournamentId).populate('fights');
+
+                if (currentTournament.status === 'ready') {
+
+                    for (let index = 0; index < currentTournament.fights.length - 1; index++) {
+
+                        const fight = await currentTournament.fights[index].populate('nfts');
+                        const firstNftId = fight.nfts[0].id
+                        const secondNftId = fight.nfts[1].id
+                        fight.winnerId = getWinner(firstNftId, secondNftId)
+                        fight.loserId = fight.winnerId === firstNftId ? secondNftId : firstNftId
+
+                        let fightReplay = getFightReplay(firstNftId, secondNftId, fight.winnerId)
+                        fight.fightReplay.push(...fightReplay)
+
+                        await fight.save()
+                    }
+                    return currentTournament
+                } else {
+                    throw new Error('Tournament is not ready.')
+                }
+
+            } catch (err) {
+                throw new Error(err)
+            }
+        }
     },
 
 }
