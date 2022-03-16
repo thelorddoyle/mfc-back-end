@@ -8,69 +8,76 @@ const { AuthenticationError } = require('apollo-server');
 const { getCurrentTournament } = require('./tournament');
 const { UserInputError } = require('apollo-server');
 
+
+const findFirstFight = async (tournament, nftId) => {
+
+	const round = tournament.round
+	const fights = tournament.fights;
+	for (let i = 0; i < fights.length; i++) {
+		const length = fights[i].nfts.length
+		if(fights[1].nfts.length === 1 ){
+			tournament.status = "ready";
+	 		await tournament.save();
+		}
+		if(round === 1 && (length === 0  || length === 1)){
+			fights[i].nfts.push(nftId);
+			await fights[i].save();
+			break;
+		}
+		if(round > 1 && length === 1){
+			fights[i].nfts.push(nftId);
+			await fights[i].save();
+			break;
+		}
+	}
+	
+}
+
+
 const putNftIntoAvailibleFight = async function (nftId) {
 	//check if any fight is empty if not then make a new
+	let roundNumberTracker
 	try {
+		//this is getting the first "pending" tournament
 		const tournament = await getCurrentTournament();
 		await tournament.populate('fights');
-        let firstFight;
         // let mintRoundNumber = tournament.round
-        let roundNumberTracker = tournament.round + 1;
-
-        const findFirstFight = async (roundNo) => {
-            firstFight =  tournament.fights.find( async (fight, index)  => {
-                const length = fight.nfts.length;
-                if(index === 1 && length ===1) {
-                    tournament.status = "ready";
-                    await tournament.save();
-                }
-                return tournament.round === 1 ? length < 2 : length === 1
-
-            })
-			firstFight.nfts.push(nftId);
-			await firstFight.save();
-        }
-
-        await findFirstFight(tournament.round)
-
+        roundNumberTracker = tournament.round + 1;
+        await findFirstFight(tournament, nftId)
 		
+	
         const remainingRounds = (3 - tournament.round)
         for (i=0; i < remainingRounds; i++) {
-
-            let nextTournament = await Tournament.findOne({round: roundNumberTracker}).populate('fights')
-
-            let fightToSave = nextTournament.fights.find(async (fight, index) => {
-
-
-                let length = fight.nfts.length;
-                
-                if(index === 1 && length ===1) {
-                    tournament.status = "ready";
-                    await tournament.save();
-                }
-                return length === 0
-            })
-                
+            let allTournamentsInRound = await Tournament.find({round: roundNumberTracker}).populate('fights')
+			breakingLoops:
+			for (let j = 0; j < allTournamentsInRound.length; j++) {
+				const fights = allTournamentsInRound[j].fights
+				for (let i = 0; i < fights.length; i++) {
+					const length = fights[i].nfts.length
+					if(length === 0  && (fights[i].tournamentIndex < 2)){
+						fights[i].nfts.push(nftId);
+						await fights[i].save();
+						break breakingLoops;
+					}
+				}
+			}
             if (roundNumberTracker < 10) {
                 roundNumberTracker++
             }
 
-            fightToSave.nfts.push(nftId);
-            await fightToSave.save();
-
         }
 		
-		if (!firstFight){ // when 
-			 throw new UserInputError('Tournament is full');
-		} 
+		// if (!firstFight){ // when 
+		// 	 throw new UserInputError('Tournament is full');
+		// } 
 
 		const  tournaments = await getCurrentTournament();
 		await tournaments.populate('fights');
-		
-		
 	} catch (error) {
+
 		throw new UserInputError(error);
 	}
+		
 };
 // putNftIntoAvailibleFight('62305a5fce72d28cb91f5343');
 

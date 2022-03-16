@@ -43,7 +43,7 @@ const createTournament = async  function(createTournament){
                 tournamentIndex: i,
                 nfts: []
             })
-            fightsArray.push(generateFight._id)
+        fightsArray.push(generateFight._id)
         }
 
         tournament.fights.push(...fightsArray);
