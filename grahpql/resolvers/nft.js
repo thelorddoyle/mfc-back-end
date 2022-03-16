@@ -14,7 +14,6 @@ const putNftIntoAvailibleFight = async function (nftId) {
 	try {
 		const tournament = await getCurrentTournament();
 		await tournament.populate('fights');
-
         let firstFight;
         // let mintRoundNumber = tournament.round
         let roundNumberTracker = tournament.round + 1;
@@ -43,7 +42,8 @@ const putNftIntoAvailibleFight = async function (nftId) {
                 return roundNo === 1 ? length < 2 : length === 1
 
             })
-
+			firstFight.nfts.push(nftId);
+			firstFight.save();
         }
 
         // initially calls the function that gets us our starting point
@@ -52,9 +52,6 @@ const putNftIntoAvailibleFight = async function (nftId) {
         // Once we have the first fight populated. We then just need to put that NFT in to all proceeding rounds, fights that have 0 people in them. Doing this means they will autofill at index 0, as long as fight index === 1 && length ===1 is not true, as this wil mark tournament as ready
 		
         const remainingRounds = (3 - tournament.round)
-        console.log('the remaining rounds are: ', remainingRounds)
-        console.log('the round number is ', tournament.round)
-
         for (i=0; i < remainingRounds; i++) {
 
             let nextTournament = await Tournament.findOne({round: roundNumberTracker}).populate('fights')
@@ -83,11 +80,10 @@ const putNftIntoAvailibleFight = async function (nftId) {
         }
 		
 		if (!firstFight){ // when 
-			// throw new UserInputError('Tournament is full');
+			 throw new UserInputError('Tournament is full');
 		} 
 		//TODO: Instead of throwing new error we need to  trigger a new tournament and change
-		// firstFight.nfts.push(nftId);
-		// firstFight.save();
+		
 
         // now use the tournament index of tournament in firstFight
         // 3 - roundNumber of firstFight = the number of loops that need to be made
@@ -104,7 +100,7 @@ const putNftIntoAvailibleFight = async function (nftId) {
 		throw new UserInputError(error);
 	}
 };
-putNftIntoAvailibleFight('62305a5fce72d28cb91f5343');
+// putNftIntoAvailibleFight('62305a5fce72d28cb91f5343');
 
 module.exports = {
 	Query: {
