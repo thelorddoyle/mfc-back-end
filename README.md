@@ -17,10 +17,10 @@ Unique mints for each round:
 
 
 
-1. Use tourney to pass the minted nft to the first availible fight slot. 
-2. Add "round" field to the Tournament 
-3. Make some seeds mentioned
-4. Make sure you can reseed (destroy all)
+1. ~~Use tourney to pass the minted nft to the first availible fight slot.~~
+2. ~~Add "round" field to the Tournament~~
+3. ~~Make some seeds mentioned~~
+4. ~~Make sure you can reseed (destroy all)~~
 5. Build function that places NFTs in to all of their future positions in rounds @ mint stage
 6. Resolve our first tournament
     6.1. complete the fight between nft 1 and nft 2 in an individual Fight
