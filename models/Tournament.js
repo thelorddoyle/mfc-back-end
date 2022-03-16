@@ -14,7 +14,8 @@ const tournamentSchema = new Schema({
         default: 'pending'
     },
     fights:[{
-        fightId: String
+        type: Schema.Types.ObjectId, 
+        ref: 'Fight'
     }],
 })
 

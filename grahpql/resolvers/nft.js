@@ -8,20 +8,22 @@ const { getCurrentTournament } = require('./tournament');
 const { UserInputError } = require('apollo-server');
 
 const organiseFight = async function (nftId) {
-  //const  getTourney  = await getCurrentTournament();
-	try {
-		const fight =
-		(await Fight.findOne({ nfts: { $size: 1 } })) ||
-		(await Fight.findOne({ nfts: { $size: 0 } }));
-		//TODO: Instead of throwing new error we need to  trigger a new tournament and change
-		//current tournament to 'ACTIVE'
-		if (!fight) throw new UserInputError('Tournament is full');
-		fight.nfts.push(nftId);
-		fight.save();
-	} catch (error) {
-		throw new UserInputError(error);
-	}
-};
+  const  getTourney  = await getCurrentTournament();
+  console.log('torueny', await getTourney.populate('fights'));
+//   try {
+// 		const fight =
+// 		(await Fight.findOne({ nfts: { $size: 1 } })) ||
+// 		(await Fight.findOne({ nfts: { $size: 0 } }));
+// 		//TODO: Instead of throwing new error we need to  trigger a new tournament and change
+// 		//current tournament to 'ACTIVE'
+// 		if (!fight) throw new UserInputError('Tournament is full');
+// 		fight.nfts.push(nftId);
+// 		fight.save();
+
+// 	} catch (error) {
+// 		throw new UserInputError(error);
+// 	}
+ };
 organiseFight('62305a5fce72d28cb91f5343');
 
 module.exports = {
