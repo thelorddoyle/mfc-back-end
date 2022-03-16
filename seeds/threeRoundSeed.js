@@ -1,26 +1,3 @@
-let db; // store the DB connection object here
-const MongoClient = require('mongodb').MongoClient;
-MongoClient.connect(
-    'mongodb://127.0.0.1:27017/', // URL to reach the server
-    {}, // options object
-    (err, client) => {
-        // Check for errors
-        if( err ){
-        console.log('Error connecting to MongoDB server:', err);
-        process.exit( 1 );  // quit the program with a non-zero error code
-        } // error check
-        // If we got this far, it means the connection was successful
-        db = client.db('ba'); // select the specific DB by name
-        // now that we have a connection, we can start adding flights
-        // First do equivalent of Flight.destroy_all
-        db.collection('flights').deleteMany({}, (err, results) => {
-        if( err ){
-            return console.log('Error deleting flights:', err);
-        }
-        insertFlights();
-        }); // deleteMany()
-    }
-); // .connect()
 const insertFlights = () => {
     console.log('insertFlights()');
     // What SQL calls tables, MongoDB calls 'collections'
