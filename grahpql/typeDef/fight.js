@@ -12,7 +12,8 @@ module.exports = gql`
     }
 
     type FightMove{
-        ownerId: String!,
+        attackerId: String!,
+        defenderId: String!,
         body: String!,
     }
 
@@ -27,7 +28,8 @@ module.exports = gql`
 
         
     input CreateFightMove{
-        ownerId: String!,
+        attackerId: String!,
+        defenderId: String!,
         body: String!,
     }
 
