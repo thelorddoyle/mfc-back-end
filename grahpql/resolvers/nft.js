@@ -76,17 +76,16 @@ const putNftIntoAvailibleFight = async function (nftId) {
 	}
 		
 };
-// putNftIntoAvailibleFight('62305a5fce72d28cb91f5343');
 
 module.exports = {
 	Query: {
 		async getNfts() {
-		try {
-			const result = await Nft.find();
-			return result;
-		} catch (error) {
-			throw new Error(error);
-		}
+			try {
+				const result = await Nft.find();
+				return result;
+			} catch (error) {
+				throw new Error(error);
+			}
 		},
 
 		async getNft(_, { nftID }) {
