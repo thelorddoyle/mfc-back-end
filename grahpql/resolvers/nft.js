@@ -13,8 +13,10 @@ const findFirstFight = async (tournament, nftId) => {
 
 	const round = tournament.round
 	const fights = tournament.fights;
+
 	for (let i = 0; i < fights.length; i++) {
 		const length = fights[i].nfts.length
+
 		if(fights[1].nfts.length === 1 ){
 			tournament.status = "ready";
 	 		await tournament.save();
