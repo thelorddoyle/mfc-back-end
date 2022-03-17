@@ -20,6 +20,7 @@ Unique mints for each round:
 1. ~~Use tourney to pass the minted nft to the first availible fight slot.~~
 2. ~~Add "round" field to the Tournament~~
 3. ~~Make some seeds mentioned~~
+3.1 Make some Nft Minting Seeds. 
 4. ~~Make sure you can reseed (destroy all)~~
 5. ~~Build function that places NFTs in to all of their future positions in rounds @ mint stage~~
 6. Resolve our first tournament
@@ -32,3 +33,4 @@ Unique mints for each round:
     6.6. ~~after fight has been resolved, move the winning NFT in to the next fight @ tournamentIndex 3~~
     6.7. ~~loop until tournament has "completed".~~
     6.8. ~~update tournament winner and loser fields~~
+7. Chain the Resolving of all tournament (DAN PLEASE CONFIRM IF THIS IS CORRECT BUSINESS LOGIC)

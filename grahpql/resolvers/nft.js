@@ -9,24 +9,25 @@ const { getCurrentTournament } = require('./tournament');
 const { UserInputError } = require('apollo-server');
 
 
-const findFirstFight = async (tournament, nftId) => {
+const insertFirstFight = async (tournament, nftId) => {
 
 	const round = tournament.round
 	const fights = tournament.fights;
 
 	for (let i = 0; i < fights.length; i++) {
-		const length = fights[i].nfts.length
+		const nftSlotsOccupied = fights[i].nfts.length
 
+		//TODO: why does this need to be here? It's triggering every loop (should only be when you assign that seat)
 		if(fights[1].nfts.length === 1 ){
 			tournament.status = "ready";
 	 		await tournament.save();
 		}
-		if(round === 1 && (length === 0  || length === 1)){
+		if(round === 1 && (nftSlotsOccupied === 0 || nftSlotsOccupied === 1)){
 			fights[i].nfts.push(nftId);
 			await fights[i].save();
 			break;
 		}
-		if(round > 1 && length === 1){
+		if(round > 1 && nftSlotsOccupied === 1){
 			fights[i].nfts.push(nftId);
 			await fights[i].save();
 			break;
@@ -34,24 +35,23 @@ const findFirstFight = async (tournament, nftId) => {
 	}
 }
 
-const putNftIntoAvailibleFight = async function (nftId) {
-	//check if any fight is empty if not then make a new
-	let roundNumberTracker
+const putNftIntoAvailibleFights = async function (nftId) {
+	//
 	try {
-		//this is getting the first "pending" tournament
-		const tournament = await getCurrentTournament();
+		const tournament = await getCurrentTournament(); // get the first "status: pending" tournament
 		await tournament.populate('fights');
-        // let mintRoundNumber = tournament.round
-        roundNumberTracker = tournament.round + 1;
-        await findFirstFight(tournament, nftId)
 		
+        let roundNumberTracker = tournament.round + 1;
+        await insertFirstFight(tournament, nftId)
 	
-        const remainingRounds = (3 - tournament.round)
+        const remainingRounds = (3 - tournament.round) //TODO: change this this '3' when the 
         for (i=0; i < remainingRounds; i++) {
             let allTournamentsInRound = await Tournament.find({round: roundNumberTracker}).populate('fights')
-			breakingLoops:
+
+			breakingLoops: // the break below will bubble up to here. 
 			for (let j = 0; j < allTournamentsInRound.length; j++) {
 				const fights = allTournamentsInRound[j].fights
+				
 				for (let i = 0; i < fights.length; i++) {
 					const length = fights[i].nfts.length
 					if(length === 0  && (fights[i].tournamentIndex < 2)){
@@ -61,6 +61,8 @@ const putNftIntoAvailibleFight = async function (nftId) {
 					}
 				}
 			}
+
+			//TODO: figure out why this needs a conditional?
             if (roundNumberTracker < 10) {
                 roundNumberTracker++
             }
@@ -73,10 +75,8 @@ const putNftIntoAvailibleFight = async function (nftId) {
 		const  tournaments = await getCurrentTournament();
 		await tournaments.populate('fights');
 	} catch (error) {
-
 		throw new UserInputError(error);
 	}
-		
 };
 
 module.exports = {
@@ -116,6 +116,7 @@ module.exports = {
 			}
 		},
 
+		// Assigns NFT UserId & enters them into one pending tournaments in each round. 
 		async mintNft(_, { userId }, context) {
 		try {
 				const nft = await Nft.findOne({ user: { $exists: false } });
@@ -125,7 +126,7 @@ module.exports = {
 					await nft.save();
 					await nft.populate('user'); // adds the user reference obj
 					
-					putNftIntoAvailibleFight(nft.id);
+					putNftIntoAvailibleFights(nft.id);
 					return nft;
 				} else {
 					throw new Error('We are out of NFTs');
