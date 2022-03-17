@@ -4,8 +4,8 @@ module.exports = gql`
 
     type Fight{
         id: ID!,
-        winnerId: String!,
-        loserId: String!,
+        winnerId: String,
+        loserId: String,
         fightReplay: [FightMove]!,
         tournamentIndex: Int!,
         nfts: [Nft]

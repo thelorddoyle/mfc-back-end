@@ -3,6 +3,14 @@ const { model, Schema } = require('mongoose');
 const tournamentSchema = new Schema({
     startDate: Date,
     round: Number,
+    winner: {
+        type: Schema.Types.ObjectId,
+        ref: 'Nft'
+    },
+    runnerUp: {
+        type: Schema.Types.ObjectId,
+        ref: 'Nft'
+    },
     status: {
         type: String,
         // status descriptions:
@@ -13,7 +21,6 @@ const tournamentSchema = new Schema({
         
         default: 'pending'
     },
-
     
     // TODO: fix the association with fights
     fights: [
