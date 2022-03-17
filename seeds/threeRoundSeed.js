@@ -19,9 +19,10 @@ const gloves = ['Red','Yellow','Green','Brown']
 const bruisingOrBlood = ['Black eye','Bloody Lip']
 const image = ['None']
 
-
-const selectRandom = function(array){
-    return Math.floor(Math.random() * array.length);
+const selectRandomElement = function(array){
+    return array[
+        Math.floor(Math.random() * array.length) // picks a random index
+    ];
 }
 
 db.once('open', async () => {
@@ -29,17 +30,19 @@ db.once('open', async () => {
     await Fight.deleteMany();
     await Tournament.deleteMany();
 
+    //CREATE TOURNAMENTS (THIS TRIGGERS FIGHT CREATION)
     try {
         let roundTourney;
         for (let i = 0; i < 7; i++) {
-            if( i === 0 ){
+            if( i === 0 ) {
                 roundTourney = 1;
-            }else if(i === 1 || i <=2 ){
+            } else if(i === 1 || i <=2 ) {
                 roundTourney = 2 ;
-            }else if(i === 3  || i <= 7 ){
+            } else if(i === 3  || i <= 7 ) {
                 roundTourney = 3 
             }
-            const  result =  await createTournament(
+            
+            await createTournament(
                 {
                     startDate: new Date(),
                     status: 'pending',
@@ -53,34 +56,36 @@ db.once('open', async () => {
         throw new Error(error)
     }
 
+    //CREATE NFTS
     try {
         
         for (let i = 0; i < 99; i++) {
-                await Nft.create({
-                    background: background[selectRandom(background)],
-                    bodyType: bodyType[selectRandom(bodyType)],
-                    jewellery: jewellery[selectRandom(jewellery)],
-                    tattoos: tattoos[selectRandom(tattoos)],
-                    hairStyle: hairStyle[selectRandom(hairStyle)],
-                    eyeColor: eyeColor[selectRandom(eyeColor)],
-                    facialHair: facialHair[selectRandom(facialHair)],
-                    clothing: clothing[selectRandom(clothing)],
-                    shorts: shorts[selectRandom(shorts)],
-                    mouth: mouth[selectRandom(mouth)],
-                    headgear: headgear[selectRandom(headgear)],
-                    gloves: gloves[selectRandom(gloves)],
-                    bruisingOrBlood: bruisingOrBlood[selectRandom(bruisingOrBlood)],
-                    image: image[selectRandom(image)]
-                })
+            
+            await Nft.create({
+                background: selectRandomElement(background),
+                bodyType: selectRandomElement(bodyType),
+                jewellery: selectRandomElement(jewellery),
+                tattoos: selectRandomElement(tattoos),
+                hairStyle: selectRandomElement(hairStyle),
+                eyeColor: selectRandomElement(eyeColor),
+                facialHair: selectRandomElement(facialHair),
+                clothing: selectRandomElement(clothing),
+                shorts: selectRandomElement(shorts),
+                mouth: selectRandomElement(mouth),
+                headgear: selectRandomElement(headgear),
+                gloves: selectRandomElement(gloves),
+                bruisingOrBlood: selectRandomElement(bruisingOrBlood),
+                image: selectRandomElement(image),
+            });
 
         }
         console.log(`Created ${await Nft.count()} Nfts`);
-        
+
         process.exit(0); // exits the node mode after seeding. 
-      
+        
     } catch (error) {
         throw new Error(error)
     }
-
+    
 
 })
