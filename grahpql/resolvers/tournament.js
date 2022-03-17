@@ -160,11 +160,13 @@ module.exports =  {
 
                 if (currentTournament.status === 'ready') {
 
-                    for (let index = 0; index < currentTournament.fights.length - 1; index++) {
+                    // Loop over all fights in current tournament, pick winner, make a fightReplay, push fighter into next tier & updating tournament.
+                    for (let index = 0; index < currentTournament.fights.length; index++) {
 
                         const fight = await currentTournament.fights[index].populate('nfts');
                         const firstNftId = fight.nfts[0].id;
                         const secondNftId = fight.nfts[1].id;
+
                         fight.winnerId = getWinner(firstNftId, secondNftId);
                         fight.loserId = fight.winnerId === firstNftId ? secondNftId : firstNftId;
 
@@ -172,23 +174,30 @@ module.exports =  {
                         fight.fightReplay.push(...fightReplay);
                         
                         await fight.save();
-                        // TODO: send winner to next fight then resolve.
 
                         // find the next availible fight in next tournament tier. 
-                        const nextTier = fight.tier + 1
+                        // for the last fight update the tournament winnerId and runnerupId
                         
-                        // finds the first fight in next tier that has an empty slot. 
-                        const nextFight = await currentTournament.fights.find( fight => {
-                            return fight.tier = nextTier && fight.nfts.length !== 2
-                        });
-                        
+                        if (index !== currentTournament.fights.length - 1){
+                            const nextTier = fight.tier + 1
+                            
+                            // finds the first fight in next tier that has an empty slot. //
+                            const nextFight = await currentTournament.fights.find( fight => {
+                                return fight.tier === nextTier && fight.nfts.length !== 2
+                            });
+                            
+                            nextFight.nfts.push(fight.winnerId);
+                            
+                            await nextFight.save();
+                        } else{
+                            //If last fight update the tournament winnerId and runnerupId & Update Tournament to completed. 
+                            currentTournament.winner = fight.winnerId;
+                            currentTournament.runnerUp = fight.loserId;
+                            currentTournament.status = "completed";
 
-                        console.log('tier:', fight.tier);
-                        console.log('next fight:', nextFight);
-                        nextFight.nfts.push(fight.winnerId);
-
-                        await nextFight.save();
-
+                            await currentTournament.save();
+                            
+                        }
                     }
                     return currentTournament
                 } else {
