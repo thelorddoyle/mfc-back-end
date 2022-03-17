@@ -5,6 +5,7 @@ const fightSchema = new Schema({
     loserId: String,
     fightReplay: [],
     tournamentIndex: Number,
+    tier: Number,
     tournament: {
         type: Schema.Types.ObjectId, 
         ref: 'Tournament'

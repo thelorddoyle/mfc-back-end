@@ -821,7 +821,6 @@ function generateFightResults (firstNft, secondNft, victoriousNft) {
             attackerId: move[1],
             defenderId: move[2]
             })
-        console.log(attackSequenceWithMoves[index].attackerId, attackSequenceWithMoves[index].body)
     })
     }
 
@@ -981,7 +980,7 @@ function generateFightResults (firstNft, secondNft, victoriousNft) {
         fightService.stop();
         convertRawAttackSequence(attackSequenceRaw)
         finaliseFight(attackSequence)
-        console.log(`${ state.context.attacker } has won!`)
+        // console.log(`${ state.context.attacker } has won!`)
     } else {
         fightService.send({ type: nextEvent });
     }
@@ -1024,7 +1023,7 @@ function generateFightResults (firstNft, secondNft, victoriousNft) {
     }
     }
 
-    console.log(attackSequenceWithMoves)
+    // console.log(attackSequenceWithMoves)
 
     return attackSequenceWithMoves
 

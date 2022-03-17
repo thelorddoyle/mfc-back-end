@@ -28,7 +28,6 @@ const createFight = async function (createFight){
     try{
         const fight = await new Fight({...createFight})
         await fight.save();
-        console.log(fight);
         return fight;
     } catch(err){
         throw new Error(err);
@@ -57,10 +56,14 @@ const createTournament = async  function(createTournament){
 
         //We create the first two empty fights
         for (let i = 0; i < 3; i++) {
+            const tier = i < 2 ? 1 : 2;
+            //TODO: make a helper function that gives the right tier for 32 nfts
+
             const generateFight = await createFight({
                 fightReplay: [],
                 tournamentIndex: i,
-                nfts: []
+                nfts: [],
+                tier
             })
         fightsArray.push(generateFight._id)
         }
@@ -72,7 +75,7 @@ const createTournament = async  function(createTournament){
     } catch(err){
         throw new Error(err);
     }
-  };
+};
 
 module.exports =  {
     createTournament,
@@ -118,7 +121,7 @@ module.exports =  {
                 const tournament = await new Tournament({...createTournament})
                 const fightsArray = [];
 
-                //We create the first two empty fights
+                //We create the first three empty fights
                 for (let i = 0; i < 3; i++) {
                     const generateFight = await createFight({
                         fightReplay: [],
@@ -160,15 +163,32 @@ module.exports =  {
                     for (let index = 0; index < currentTournament.fights.length - 1; index++) {
 
                         const fight = await currentTournament.fights[index].populate('nfts');
-                        const firstNftId = fight.nfts[0].id
-                        const secondNftId = fight.nfts[1].id
-                        fight.winnerId = getWinner(firstNftId, secondNftId)
-                        fight.loserId = fight.winnerId === firstNftId ? secondNftId : firstNftId
+                        const firstNftId = fight.nfts[0].id;
+                        const secondNftId = fight.nfts[1].id;
+                        fight.winnerId = getWinner(firstNftId, secondNftId);
+                        fight.loserId = fight.winnerId === firstNftId ? secondNftId : firstNftId;
 
-                        let fightReplay = getFightReplay(firstNftId, secondNftId, fight.winnerId)
-                        fight.fightReplay.push(...fightReplay)
+                        let fightReplay = getFightReplay(firstNftId, secondNftId, fight.winnerId);
+                        fight.fightReplay.push(...fightReplay);
+                        
+                        await fight.save();
+                        // TODO: send winner to next fight then resolve.
 
-                        await fight.save()
+                        // find the next availible fight in next tournament tier. 
+                        const nextTier = fight.tier + 1
+                        
+                        // finds the first fight in next tier that has an empty slot. 
+                        const nextFight = await currentTournament.fights.find( fight => {
+                            return fight.tier = nextTier && fight.nfts.length !== 2
+                        });
+                        
+
+                        console.log('tier:', fight.tier);
+                        console.log('next fight:', nextFight);
+                        nextFight.nfts.push(fight.winnerId);
+
+                        await nextFight.save();
+
                     }
                     return currentTournament
                 } else {
