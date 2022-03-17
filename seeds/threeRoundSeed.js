@@ -47,7 +47,7 @@ db.once('open', async () => {
                 }
               )
         }
-        console.log("tournaments created");
+        console.log(`Created ${await Tournament.count()} Tournaments`);
       
     } catch (error) {
         throw new Error(error)
@@ -56,7 +56,7 @@ db.once('open', async () => {
     try {
         
         for (let i = 0; i < 99; i++) {
-                const result = await Nft.create({
+                await Nft.create({
                     background: background[selectRandom(background)],
                     bodyType: bodyType[selectRandom(bodyType)],
                     jewellery: jewellery[selectRandom(jewellery)],
@@ -74,7 +74,9 @@ db.once('open', async () => {
                 })
 
         }
-        console.log("Nfts created");
+        console.log(`Created ${await Nft.count()} Nfts`);
+        
+        process.exit(0); // exits the node mode after seeding. 
       
     } catch (error) {
         throw new Error(error)
