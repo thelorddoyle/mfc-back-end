@@ -1,12 +1,9 @@
-const userResolvers = require('./user');
-const nftResolvers = require('./nft');
-const tournamentResolvers = require('./tournament');
-const fightResolvers = require('./fight');
-
-
+const userResolvers = require("./user");
+const nftResolvers = require("./nft");
+const tournamentResolvers = require("./tournament");
+const fightResolvers = require("./fight");
 
 module.exports = {
-
     Query: {
         ...nftResolvers.Query,
         ...userResolvers.Query,
@@ -14,11 +11,10 @@ module.exports = {
         ...fightResolvers.Query,
     },
 
-    Mutation:{
+    Mutation: {
         ...userResolvers.Mutation,
         ...nftResolvers.Mutation,
         ...tournamentResolvers.Mutation,
-        ...fightResolvers.Mutation
-    }
-
-}
+        ...fightResolvers.Mutation,
+    },
+};
