@@ -2,7 +2,7 @@ const User = require("../../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { UserInputError } = require("apollo-server");
-const { validateUser, validateLogin, validateUpdate } = require("../../helpers/validators");
+const { validateUser, validateLogin, validateUserUpdate } = require("../../helpers/validators");
 const checkAuth = require("../../middleware/checkAuth");
 const Nft = require("../../models/Nft");
 
@@ -98,6 +98,7 @@ module.exports = {
 
             //If any errors we throw an exception
             if (!valid) throw new UserInputError("Errors", { errors });
+            //TODO: Put all this validation into the
 
             //We check if user already exist
             const user = await User.findOne({ username });
@@ -131,20 +132,18 @@ module.exports = {
         },
 
         async updateUser(_, { user }) {
-            try {
-                const { id, email } = user;
-                const currentUser = await User.findById(id);
+            // I think I need to be passing in the full obj then looping over all the values that are different. 
+            const { id, email, username } = user;
+            const currentUser = await User.findById(id);
+            const {email: currentEmail , username: currentUsername } = currentUser; 
+            // foreach of the values you want to send through check if they are different only send through the actual differences. 
 
-                //TODO: validate other changes(username is unique, )
-                const {errors, valid} = validateUpdate(email);
-                if (!valid) throw new UserInputError('Errors', { errors });
-                
-                Object.assign(currentUser, user);
-                currentUser.save();
-                return currentUser;
-            } catch (error) {
-                throw new Error(error);
-            }
+            const {errors, valid} = await validateUserUpdate(email, username, currentEmail, currentUsername);
+            if (!valid) throw new UserInputError('Errors', { errors });
+            
+            Object.assign(currentUser, user);
+            currentUser.save();
+            return currentUser;
         },
 
         async deleteUser(_, { userId }) {

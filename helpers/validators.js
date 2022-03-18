@@ -8,21 +8,29 @@ const emailIsNotValid = (email) => {
     return !email.match(regEx);
 };
 
-const validateUpdate = async (email, username) => {
+const usernameIsInUse = async (username) => {
+    return await User.findOne({username});
+} 
+
+const validateUserUpdate = async (email, username, currentEmail, currentUsername) => {
     const errors = {};
 
     if (username.trim() === "") {
         errors.username = "Username must not be empty";
     }
-    const user = await User.find({username});
-    console.log('user:', user);
 
-    if(user){
-        errors.username = 'username is already taken';
+    if(await usernameIsInUse(username) && (currentUsername !== username)){ // makes sure username not in use, if it must not be someone else's username
+        errors.username = 'Username is already taken';
     }
 
     if (emailIsNotValid(email)) {
         errors.email = "Must be a valid email";
+    }
+
+    const userWithEmail = await User.findOne({email});
+
+    if(userWithEmail && (currentEmail !== email)){ // makes sure email not in use, if it must not be someone else's email
+        errors.email = 'Email is already taken';
     }
 
     return {
@@ -72,5 +80,5 @@ const validateLogin = (username, password) => {
 module.exports = {
     validateUser,
     validateLogin,
-    validateUpdate,
+    validateUserUpdate,
 };
