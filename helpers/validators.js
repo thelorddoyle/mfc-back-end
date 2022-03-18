@@ -12,14 +12,16 @@ const usernameIsInUse = async (username) => {
     return await User.findOne({username});
 } 
 
-const validateUserUpdate = async (email, username, currentEmail, currentUsername) => {
+
+const validateUserUpdate = async (email, username, currentUser) => {
+    // foreach of the values you want to send through check if they are different only send through the actual differences. 
+    const {email: currentEmail , username: currentUsername } = currentUser; 
+
     const errors = {};
 
     if (username.trim() === "") {
         errors.username = "Username must not be empty";
-    }
-
-    if(await usernameIsInUse(username) && (currentUsername !== username)){ // makes sure username not in use, if it must not be someone else's username
+    } else if (await usernameIsInUse(username) && (currentUsername !== username)){ // makes sure username not in use, if it must not be someone else's username
         errors.username = 'Username is already taken';
     }
 
@@ -39,11 +41,15 @@ const validateUserUpdate = async (email, username, currentEmail, currentUsername
     };
 };
 
-const validateUser = (username, email, password, confirmPassword) => {
+const validateUser = async (username, email, password, confirmPassword) => {
     const errors = {};
+
     if (username.trim() === "") {
         errors.username = "Username must not be empty";
+    } else if(await usernameIsInUse(username)) {
+        errors.username = "Username already exist";
     }
+    // check if email is in use
     if (email.trim() === "") {
         errors.email = "Email must not be empty";
     } else {

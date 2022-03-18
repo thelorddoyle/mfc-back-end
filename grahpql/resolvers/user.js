@@ -2,7 +2,11 @@ const User = require("../../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { UserInputError } = require("apollo-server");
-const { validateUser, validateLogin, validateUserUpdate } = require("../../helpers/validators");
+const {
+    validateUser,
+    validateLogin,
+    validateUserUpdate
+} = require("../../helpers/validators");
 const checkAuth = require("../../middleware/checkAuth");
 const Nft = require("../../models/Nft");
 
@@ -89,38 +93,24 @@ module.exports = {
         },
 
         async register(_, { registerInput: { username, email, password, confirmPassword } }) {
-            const { errors, valid } = validateUser(
+            const { errors, valid } = await validateUser(
                 username,
                 email,
                 password,
                 confirmPassword
             );
 
-            //If any errors we throw an exception
-            if (!valid) throw new UserInputError("Errors", { errors });
-            //TODO: Put all this validation into the
+            if (!valid) throw new UserInputError("Errors", { errors }); //If any errors we throw an exception
 
-            //We check if user already exist
-            const user = await User.findOne({ username });
-            if (user) {
-                throw new UserInputError("Username already exist", {
-                    errors: {
-                        username: "This user is already taken",
-                    },
-                });
-            }
-
-            //We encrypt password before saving it
-            password = await bcrypt.hash(password, 12); //We await because bcrypt is async
+            password = await bcrypt.hash(password, 12); //Encrypt password before saving it
             const newUser = new User({
                 email,
                 username,
                 password,
                 createdAt: new Date(),
             });
+            const result = await newUser.save(); //TODO: refactor this to use User.create()
 
-            const result = await newUser.save();
-            //We create token auth
             const token = generateToken(result);
 
             //Return user object and token
@@ -131,18 +121,21 @@ module.exports = {
             };
         },
 
-        async updateUser(_, { user }) {
-            // I think I need to be passing in the full obj then looping over all the values that are different. 
-            const { id, email, username } = user;
-            const currentUser = await User.findById(id);
-            const {email: currentEmail , username: currentUsername } = currentUser; 
-            // foreach of the values you want to send through check if they are different only send through the actual differences. 
+        // validates a change in email, username
+        async updateUser(_, { user }, context) {
+            const { id } = checkAuth(context);
+            const currentUser = await User.findOne({ id });
+            const { email, username } = user; //NOTE: id is userId and email and username are the new values(to update to).
+            const { errors, valid } = await validateUserUpdate(
+                email,
+                username,
+                currentUser
+            );
+            if (!valid) throw new UserInputError("Errors", { errors });
 
-            const {errors, valid} = await validateUserUpdate(email, username, currentEmail, currentUsername);
-            if (!valid) throw new UserInputError('Errors', { errors });
-            
-            Object.assign(currentUser, user);
+            Object.assign(currentUser, user); //changes only the
             currentUser.save();
+
             return currentUser;
         },
 
@@ -164,10 +157,11 @@ module.exports = {
         },
 
         async addAmount(_, { amount }, context) {
-            const { username } = checkAuth(context);
+            // NOTE: this will probably be swapped out for defi integration.
+            const { id } = checkAuth(context);
 
             try {
-                const user = await User.findOne({ username });
+                const user = await User.findOne({ id });
                 if (user) {
                     user.amountInWallet = user.amountInWallet + amount;
                     await user.save();
