@@ -132,7 +132,7 @@ module.exports = {
                 currentUser
             );
             if (!valid) throw new UserInputError("Errors", { errors });
-
+            
             Object.assign(currentUser, user); //changes only the
             currentUser.save();
 
