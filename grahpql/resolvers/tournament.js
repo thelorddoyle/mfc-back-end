@@ -5,15 +5,10 @@ const { AuthenticationError } = require("apollo-server");
 const { generateFightResults } = require("../../helpers/fightReplayGenerator");
 
 // helper function that just randomly chooses between 2 nfts as to who wins
-const getWinner = function (nft1, nft2) {
-    if (Math.random() < 5) {
-        return nft1;
-    } else {
-        return nft2;
-    }
+const getRandomWinner = function (nft1, nft2) {
+    return Math.random() < 0.5 ? nft1 : nft2;
 };
 
-//
 const getFightReplay = function (nft1, nft2, winner) {
     try {
         const fightReplay = generateFightResults(nft1, nft2, winner);
@@ -33,13 +28,13 @@ const createFight = async function (createFight) {
     }
 };
 
-const getCurrentTournament = async function () {
+const getCurrentTournament = async function () { //TODO: possibly remove the try catch
     try {
         const result = await Tournament.findOne({ status: "pending" });
         if (result) {
             return result;
         } else {
-            throw new Error("Tournament not found");
+            throw new Error("No 'pending' tournament found");
         }
     } catch (error) {
         throw new Error("Tournament not found");
@@ -78,7 +73,7 @@ const createTournament = async function (tournamentDetails) {
 module.exports = {
     createTournament,
     getCurrentTournament,
-    getWinner,
+    getRandomWinner,
     Query: {
         async getTournaments() {
             try {
@@ -139,7 +134,6 @@ module.exports = {
             try {
                 const { id } = tournament;
                 const currentTournament = await Tournament.findById(id);
-                //TODO: put in validation later. (EMAIL)
 
                 Object.assign(currentTournament, tournament);
                 currentTournament.save();
@@ -168,7 +162,7 @@ module.exports = {
                         const firstNftId = fight.nfts[0].id;
                         const secondNftId = fight.nfts[1].id;
 
-                        fight.winnerId = getWinner(firstNftId, secondNftId);
+                        fight.winnerId = getRandomWinner(firstNftId, secondNftId);
                         fight.loserId =
                             fight.winnerId === firstNftId
                                 ? secondNftId
