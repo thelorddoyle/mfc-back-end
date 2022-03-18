@@ -2,7 +2,7 @@ const User = require("../../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { UserInputError } = require("apollo-server");
-const { validateUser, validateLogin } = require("../../helpers/validators");
+const { validateUser, validateLogin, validateUpdate } = require("../../helpers/validators");
 const checkAuth = require("../../middleware/checkAuth");
 const Nft = require("../../models/Nft");
 
@@ -88,10 +88,7 @@ module.exports = {
             };
         },
 
-        async register(
-            _,
-            { registerInput: { username, email, password, confirmPassword } }
-        ) {
+        async register(_, { registerInput: { username, email, password, confirmPassword } }) {
             const { errors, valid } = validateUser(
                 username,
                 email,
@@ -135,15 +132,18 @@ module.exports = {
 
         async updateUser(_, { user }) {
             try {
-                const { id } = user;
+                const { id, email } = user;
                 const currentUser = await User.findById(id);
-                //TODO: put in validation later. (EMAIL)
 
+                //TODO: validate other changes(username is unique, )
+                const {errors, valid} = validateUpdate(email);
+                if (!valid) throw new UserInputError('Errors', { errors });
+                
                 Object.assign(currentUser, user);
                 currentUser.save();
                 return currentUser;
             } catch (error) {
-                throw new Error("error");
+                throw new Error(error);
             }
         },
 

@@ -155,7 +155,7 @@ module.exports = {
                 ).populate("fights");
 
                 if (currentTournament.status === "ready") {
-                    // Loop over all fights in current tournament, pick winner, make a fightReplay, push fighter into next tier & updating tournament.
+                    // Loop over all fights in current tournament, pick winner, make a fightReplay, push fighter into next tiers & update tournament status.
                     for (
                         let index = 0;
                         index < currentTournament.fights.length;
@@ -219,3 +219,5 @@ module.exports = {
         },
     },
 };
+
+module.exports = {getWinner};
