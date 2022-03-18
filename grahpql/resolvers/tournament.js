@@ -18,9 +18,9 @@ const getFightReplay = function (nft1, nft2, winner) {
     }
 };
 
-const createFight = async function (createFight) {
+const createFight = async function (fightDetails) {
     try {
-        const fight = await new Fight({ ...createFight });
+        const fight = await new Fight({ ...fightDetails });
         await fight.save();
         return fight;
     } catch (err) {
@@ -28,6 +28,7 @@ const createFight = async function (createFight) {
     }
 };
 
+// get first tournament with a status: 'pending'
 const getCurrentTournament = async function () { //TODO: possibly remove the try catch
     try {
         const result = await Tournament.findOne({ status: "pending" });
@@ -41,23 +42,24 @@ const getCurrentTournament = async function () { //TODO: possibly remove the try
     }
 };
 
+// create tournament, 3 fights, and their respective 
 const createTournament = async function (tournamentDetails) {
     try {
-        //Create tournament object
         const tournament = await new Tournament({ ...tournamentDetails });
         const fightsArray = [];
 
-        //We create the first two empty fights
-        for (let i = 0; i < 3; i++) {
-            const tier = i < 2 ? 1 : 2;
-            //TODO: make a helper function that gives the right tier for 32 nfts
+        //TODO: make a helper function that gives the right tier for 32 nfts
+        //create first 3 fights
+        for (let tournamentIndex = 0; tournamentIndex < 3; tournamentIndex++) {  //TODO: change the 3 to 31
+            const tier = tournamentIndex < 2 ? 1 : 2; //TODO: change this to a loop that gives the appropriate tier. 
 
             const generateFight = await createFight({
                 fightReplay: [],
-                tournamentIndex: i,
                 nfts: [],
+                tournamentIndex,
                 tier,
             });
+
             fightsArray.push(generateFight._id);
         }
 
@@ -143,7 +145,7 @@ module.exports = {
             }
         },
 
-        async resolveTournament(_, { tournamentId }) {
+        async resolveTournament(_, { tournamentId }) { //TODO: look for refactoring here
             try {
                 const currentTournament = await Tournament.findById(
                     tournamentId
