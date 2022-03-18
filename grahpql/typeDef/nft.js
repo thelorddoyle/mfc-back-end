@@ -52,7 +52,7 @@ module.exports = gql`
 	type Mutation{
 	
 	   	createNft(createNft: CreateNft): Nft!,
-		mintNft(userId: ID!): Nft!,	
+		mintNft: Nft!,	
 		
     }
 

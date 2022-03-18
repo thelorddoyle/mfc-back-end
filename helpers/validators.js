@@ -83,8 +83,13 @@ const validateLogin = (username, password) => {
     };
 };
 
+const validateFundsAvailible = (currentUser) => {
+    
+}
+
 module.exports = {
     validateUser,
     validateLogin,
     validateUserUpdate,
+    validateFundsAvailible
 };

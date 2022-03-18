@@ -2,7 +2,6 @@
 //For each query or mutuation there is a resolver, which processes any sort of logic
 const Nft = require("../../models/Nft");
 const Tournament = require("../../models/Tournament");
-const Fight = require("../../models/Fight");
 const checkAuth = require("../../middleware/checkAuth");
 const { AuthenticationError } = require("apollo-server");
 const { getCurrentTournament } = require("./tournament");
@@ -121,12 +120,15 @@ module.exports = {
         },
 
         // Assigns NFT UserId & enters them into one pending tournaments in each round.
-        async mintNft(_, { userId }, context) {
+        async mintNft(_, { }, context) {
+            // TODO: perform a check to see if funds available.
+            const { id } = checkAuth(context);
+
             try {
                 const nft = await Nft.findOne({ user: { $exists: false } });
 
                 if (nft) {
-                    nft.user = userId; // this saves a reference to the User with the 'userId'
+                    nft.user = id; // this saves a reference to the User with the 'userId'
                     await nft.save();
                     await nft.populate("user"); // adds the user reference obj
 
