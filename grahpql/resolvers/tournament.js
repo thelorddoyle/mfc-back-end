@@ -46,10 +46,10 @@ const getCurrentTournament = async function () {
     }
 };
 
-const createTournament = async function (createTournament) {
+const createTournament = async function (tournamentDetails) {
     try {
         //Create tournament object
-        const tournament = await new Tournament({ ...createTournament });
+        const tournament = await new Tournament({ ...tournamentDetails });
         const fightsArray = [];
 
         //We create the first two empty fights
@@ -78,6 +78,7 @@ const createTournament = async function (createTournament) {
 module.exports = {
     createTournament,
     getCurrentTournament,
+    getWinner,
     Query: {
         async getTournaments() {
             try {
@@ -107,11 +108,11 @@ module.exports = {
     },
 
     Mutation: {
-        async createTournament(_, { createTournament }, context) {
+        async createTournament(_, { tournamentDetails }, context) {
             try {
                 //Create tournament object
                 const tournament = await new Tournament({
-                    ...createTournament,
+                    ...tournamentDetails,
                 });
                 const fightsArray = [];
 
@@ -219,5 +220,3 @@ module.exports = {
         },
     },
 };
-
-module.exports = {getWinner};

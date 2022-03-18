@@ -20,7 +20,6 @@ module.exports = gql`
 
     input UserInput { #User model type
     
-        id: ID!, 
         email: String
         username: String
         createdAt: Date

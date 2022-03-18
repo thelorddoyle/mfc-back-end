@@ -95,7 +95,7 @@ module.exports = {
 
         async getNft(_, { nftID }) {
             try {
-                const result = await Nft.findById(nftID);
+                const result = await Nft.findById(nftID).populate('user');
                 if (result) {
                     return result;
                 } else {
