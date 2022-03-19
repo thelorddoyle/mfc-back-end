@@ -91,7 +91,8 @@ const mintNft = async (id) => {
             await nft.save();
             await nft.populate("user"); // adds the user reference obj
 
-            putNftIntoAvailibleFights(nft.id);
+            await putNftIntoAvailibleFights(nft.id);
+            
             return nft;
         } else {
             throw new Error("We are out of NFTs");
