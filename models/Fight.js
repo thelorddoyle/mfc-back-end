@@ -4,7 +4,7 @@ const fightSchema = new Schema({
     winnerId: String,
     loserId: String,
     fightReplay: [],
-    tournamentIndex: Number, // this is the fight position within it's tournament
+    fightIndex: Number, // this is the fight position within it's tournament
     tier: Number,
     tournament: {
         type: Schema.Types.ObjectId,

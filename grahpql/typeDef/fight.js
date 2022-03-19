@@ -7,7 +7,7 @@ module.exports = gql`
         winnerId: String,
         loserId: String,
         fightReplay: [FightMove]!,
-        tournamentIndex: Int!,
+        fightIndex: Int!,
         nfts: [Nft]
     }
 
@@ -22,7 +22,7 @@ module.exports = gql`
         winnerId: String,
         loserId: String,
         fightReplay: [CreateFightMove],
-        tournamentIndex: Int,
+        fightIndex: Int,
         nfts: [CreateNft]
     }
 

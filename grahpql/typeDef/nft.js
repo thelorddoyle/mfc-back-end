@@ -42,17 +42,16 @@ module.exports = gql`
     }
 
     type Query{
-       
-
 		getNfts: [Nft]!,
 		getNft(nftID: ID!): Nft!,
-
+        getNftFights(nftID: ID!): [Fight]
     }
 
 	type Mutation{
 	
 	   	createNft(createNft: CreateNft): Nft!,
 		mintNft: Nft!,	
+        
 		
     }
 

@@ -40,14 +40,14 @@ const getTournamentCount = (numRounds) => {
     return tournamentCount;
 };
 
-const getRoundNum = (tournamentIndex) => {
-    let maxTournamentIndexInRound = 1;
+const getRoundNum = (fightIndex) => {
+    let maxfightIndexInRound = 1;
 
     for (i = 1; i < 10; i++) {
-        if (tournamentIndex <= maxTournamentIndexInRound) {
+        if (fightIndex <= maxfightIndexInRound) {
             return i;
         } else {
-            maxTournamentIndexInRound += Math.pow(2, i);
+            maxfightIndexInRound += Math.pow(2, i);
         }
     }
 };
@@ -130,7 +130,7 @@ db.once("open", async () => {
 
     // MINTING NFTS
     try {
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 32; i++) {
             await mintNft("62351e170334c980d7a09953");
         }
 

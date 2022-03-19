@@ -43,21 +43,35 @@ const getCurrentTournament = async function () { //TODO: possibly remove the try
     }
 };
 
+const getTier = (fightIndex) => {
+    if (fightIndex < 16){
+        return 1;
+    } else if(fightIndex < 24){
+        return 2;
+    } else if(fightIndex < 28){
+        return 3;
+    } else if(fightIndex < 30){
+        return 4;
+    } else if(fightIndex < 31){
+        return 5;
+    }
+}
+
 // create tournament, 3 fights, and their respective 
 const createTournament = async function (tournamentDetails) {
     try {
         const tournament = await new Tournament({ ...tournamentDetails });
         const fightsArray = [];
 
-        //TODO: make a helper function that gives the right tier for 32 nfts
         //create first 3 fights
-        for (let tournamentIndex = 0; tournamentIndex < 3; tournamentIndex++) {  //TODO: change the 3 to 31
-            const tier = tournamentIndex < 2 ? 1 : 2; //TODO: change this to a loop that gives the appropriate tier. 
+        for (let fightIndex = 0; fightIndex < 31; fightIndex++) {  // fightIndex is the fight index in the tournament ranges from 0-31
 
+            const tier = getTier(fightIndex);
+            
             const generateFight = await createFight({
                 fightReplay: [],
                 nfts: [],
-                tournamentIndex,
+                fightIndex,
                 tier,
             });
 
@@ -118,7 +132,7 @@ module.exports = {
                 for (let i = 0; i < 3; i++) {
                     const generateFight = await createFight({
                         fightReplay: [],
-                        tournamentIndex: i,
+                        fightIndex: i,
                         nfts: [],
                     });
                     fightsArray.push(generateFight._id);
