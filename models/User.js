@@ -6,6 +6,10 @@ const userSchema = new Schema({
     email: String,
     createdAt: Date,
     amountInWallet: { type: Number, default: 0 },
+    nfts: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Nft'
+    }]
 })
 
-module.exports = model('User', userSchema); 
+module.exports = model('User', userSchema);
