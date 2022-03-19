@@ -146,7 +146,7 @@ module.exports = {
             }
         },
 
-        async resolveTournament(_, { tournamentId }) { //TODO: look for refactoring here
+        async resolveTournament(_, { tournamentId }) {
             try {
                 const tournament = await Tournament.findById(tournamentId).populate("fights");
 
@@ -154,9 +154,9 @@ module.exports = {
                     throw new Error("Tournament is not ready.");
                 }
                 
-                for ( let index = 0; index < tournament.fights.length; index++ ) {
+                for ( let i = 0; i < tournament.fights.length; i++ ) {
                     // Determine winner, loser & populate the fightReplay field
-                    const fight = await tournament.fights[index].populate("nfts");
+                    const fight = await tournament.fights[i].populate("nfts");
 
                     [fight.winnerId, fight.loserId] = getWinnerAndLoser(fight.nfts[0].id, fight.nfts[1].id);
 
@@ -164,15 +164,18 @@ module.exports = {
                     fight.fightReplay.push(...fightReplay);
                     
                     await fight.save();
-
+                    
 
                     // Insert fight into the first availible slot on next tier
-                    if (index !== tournament.fights.length - 1) {
+                    
+                    if (i !== tournament.fights.length - 1) {
+                        const nextTier = fight.tier + 1;
+
                         // finds the first fight in next tier that has an empty slot.
-                        const nextFight = await tournament.fights.find((fight) => {
+                        const nextFight = await tournament.fights.find((f) => {
                             return (
-                                fight.tier === fight.tier + 1 &&
-                                fight.nfts.length !== 2
+                                f.tier === nextTier &&
+                                f.nfts.length < 2
                             );
                         });
                                 

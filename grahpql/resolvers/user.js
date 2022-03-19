@@ -23,6 +23,7 @@ function generateToken(user) {
 }
 
 module.exports = {
+    generateToken, 
     Query: {
         //NOTE: we can probably just use the auth context.
         async getUser(_, { userID }) {
