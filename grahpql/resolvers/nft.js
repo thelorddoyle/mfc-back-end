@@ -9,7 +9,7 @@ const { UserInputError } = require("apollo-server");
 const tournament = require("./tournament");
 
 const insertFirstFight = async (tournament, nftId) => {
-    const round = tournament.round;
+    const round = tournament.round; //TODO: delete this
     const fights = tournament.fights;
 
     for (let i = 0; i < fights.length; i++) {
