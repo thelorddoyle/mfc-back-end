@@ -70,7 +70,10 @@ module.exports = {
 
         async getUserNfts(_, {userID}) {
             try {
-                const nfts = await Nft.find({ user: userID }).populate("user");
+                const nfts = await Nft.find({ user: userID }).populate({
+                    path: 'fights',
+                    populate: {path: 'tournament'}
+                });
                 return nfts;
             } catch (error) {
                 throw new Error(error);

@@ -2,7 +2,7 @@ const { model, Schema } = require('mongoose');
 
 const tournamentSchema = new Schema({
     startDate: Date,
-    round: Number,
+    round: Number, // This is the position of 
     winner: {
         type: Schema.Types.ObjectId,
         ref: 'Nft'
