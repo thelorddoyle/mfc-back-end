@@ -1,124 +1,117 @@
-const Tournament = require('../../models/Tournament')
-const Fight = require('../../models/Fight')
-const checkAuth = require('../../middleware/checkAuth');
-const { AuthenticationError } = require('apollo-server');
-const {generateFightResults} = require('../../helpers/fightReplayGenerator')
+const Tournament = require("../../models/Tournament");
+const Fight = require("../../models/Fight");
+const checkAuth = require("../../middleware/checkAuth");
+const { AuthenticationError } = require("apollo-server");
+const { generateFightResults } = require("../../helpers/fightReplayGenerator");
 
-// helper function that just randomly chooses between 2 nfts as to who wins
-const getWinner = function (nft1, nft2) {
-    if (Math.random() < 5) {
-        return nft1
-    } else {
-        return nft2
-    }
-}
+// helper function that just randomly chooses the order of two nfts in an array. 
+const getWinnerAndLoser = function (nft1, nft2) {
+    return Math.random() < 0.5 ? [nft1, nft2] : [nft2, nft1];
+};
 
-// 
+// gets an array of objs that contain the move, the attacker and defender. 
 const getFightReplay = function (nft1, nft2, winner) {
-
-    try{
-        const fightReplay = generateFightResults(nft1, nft2, winner)
-        return fightReplay
+    try {
+        const fightReplay = generateFightResults(nft1, nft2, winner);
+        return fightReplay;
     } catch (err) {
-        throw new Error(err)
-    }
-}
-
-const createFight = async function (createFight){
-    try{
-        const fight = await new Fight({...createFight})
-        await fight.save();
-        return fight;
-    } catch(err){
         throw new Error(err);
     }
 };
 
-const getCurrentTournament = async function() {
+const createFight = async function (fightDetails) {
     try {
-        const result =  await Tournament.findOne({status: "pending"});
-        if (result){
-            return result
-        }else{
-            throw new Error('Tournament not found')
-        }
-        
-    } catch (error) {
-        throw new Error('Tournament not found')
+        const fight = await new Fight({ ...fightDetails });
+        await fight.save();
+        return fight;
+    } catch (err) {
+        throw new Error(err);
     }
-}
+};
 
-const createTournament = async  function(createTournament){
-    try{
-        //Create tournament object
-        const tournament = await new Tournament({...createTournament})
+// get first tournament with a status: 'pending'
+const getCurrentTournament = async function () { //TODO: possibly remove the try catch
+    try {
+        const result = await Tournament.findOne({ status: "pending" });
+        if (result) {
+            return result;
+        } else {
+            throw new Error("No 'pending' tournament found");
+        }
+    } catch (error) {
+        throw new Error("Tournament not found");
+    }
+};
+
+// create tournament, 3 fights, and their respective 
+const createTournament = async function (tournamentDetails) {
+    try {
+        const tournament = await new Tournament({ ...tournamentDetails });
         const fightsArray = [];
 
-        //We create the first two empty fights
-        for (let i = 0; i < 3; i++) {
-            const tier = i < 2 ? 1 : 2;
-            //TODO: make a helper function that gives the right tier for 32 nfts
+        //TODO: make a helper function that gives the right tier for 32 nfts
+        //create first 3 fights
+        for (let tournamentIndex = 0; tournamentIndex < 3; tournamentIndex++) {  //TODO: change the 3 to 31
+            const tier = tournamentIndex < 2 ? 1 : 2; //TODO: change this to a loop that gives the appropriate tier. 
 
             const generateFight = await createFight({
                 fightReplay: [],
-                tournamentIndex: i,
                 nfts: [],
-                tier
-            })
-        fightsArray.push(generateFight._id)
+                tournamentIndex,
+                tier,
+            });
+
+            fightsArray.push(generateFight._id);
         }
 
         tournament.fights.push(...fightsArray);
         await tournament.save();
 
         return tournament;
-    } catch(err){
+    } catch (err) {
         throw new Error(err);
     }
 };
 
-module.exports =  {
+module.exports = {
     createTournament,
     getCurrentTournament,
+    getWinnerAndLoser,
     Query: {
-    
         async getTournaments() {
             try {
                 const result = await Tournament.find();
-                return result
+                return result;
             } catch (error) {
                 throw new Error(error);
             }
         },
 
-
-        async getCurrentTournament(){
-            return getCurrentTournament(); 
+        async getCurrentTournament() {
+            return getCurrentTournament();
         },
 
-        async getTournament(_,{tournamentId}) {
-
+        async getTournament(_, { tournamentId }) {
             try {
-                const result =  await Tournament.findById(tournamentId);
-                if (result){
-                    return result
-                }else{
-                    throw new Error('Tournament not found')
+                const result = await Tournament.findById(tournamentId);
+                if (result) {
+                    return result;
+                } else {
+                    throw new Error("Tournament not found");
                 }
-                
             } catch (error) {
-                throw new Error('Tournament not found')
+                throw new Error("Tournament not found");
             }
         },
-
     },
 
     Mutation: {
-
-        async createTournament (_, {createTournament}, context){
-            try{
+        async createTournament(_, { tournamentDetails }, context) {
+            try {
                 //Create tournament object
-                const tournament = await new Tournament({...createTournament})
+                const tournament = await new Tournament({
+                    ...tournamentDetails,
+                });
                 const fightsArray = [];
 
                 //We create the first three empty fights
@@ -126,88 +119,82 @@ module.exports =  {
                     const generateFight = await createFight({
                         fightReplay: [],
                         tournamentIndex: i,
-                        nfts: []
-                    })
-                    fightsArray.push(generateFight._id)
+                        nfts: [],
+                    });
+                    fightsArray.push(generateFight._id);
                 }
 
                 tournament.fights.push(...fightsArray);
                 await tournament.save();
 
                 return tournament;
-            } catch(err){
+            } catch (err) {
                 throw new Error(err);
             }
-          },
-        
-          async updateTournament(_, {tournament}){
+        },
+
+        async updateTournament(_, { tournament }) {
             try {
-                const {id} = tournament
+                const { id } = tournament;
                 const currentTournament = await Tournament.findById(id);
-                //TODO: put in validation later. (EMAIL)
-                
+
                 Object.assign(currentTournament, tournament);
                 currentTournament.save();
                 return currentTournament;
             } catch (error) {
-                throw new Error('error');
+                throw new Error("error");
             }
         },
 
-        async resolveTournament(_, {tournamentId}) {
+        async resolveTournament(_, { tournamentId }) {
             try {
-                const currentTournament = await Tournament.findById(tournamentId).populate('fights');
+                const tournament = await Tournament.findById(tournamentId).populate("fights");
 
-                if (currentTournament.status === 'ready') {
-
-                    // Loop over all fights in current tournament, pick winner, make a fightReplay, push fighter into next tier & updating tournament.
-                    for (let index = 0; index < currentTournament.fights.length; index++) {
-
-                        const fight = await currentTournament.fights[index].populate('nfts');
-                        const firstNftId = fight.nfts[0].id;
-                        const secondNftId = fight.nfts[1].id;
-
-                        fight.winnerId = getWinner(firstNftId, secondNftId);
-                        fight.loserId = fight.winnerId === firstNftId ? secondNftId : firstNftId;
-
-                        let fightReplay = getFightReplay(firstNftId, secondNftId, fight.winnerId);
-                        fight.fightReplay.push(...fightReplay);
-                        
-                        await fight.save();
-
-                        // find the next availible fight in next tournament tier. 
-                        // for the last fight update the tournament winnerId and runnerupId
-                        
-                        if (index !== currentTournament.fights.length - 1){
-                            const nextTier = fight.tier + 1
-                            
-                            // finds the first fight in next tier that has an empty slot. //
-                            const nextFight = await currentTournament.fights.find( fight => {
-                                return fight.tier === nextTier && fight.nfts.length !== 2
-                            });
-                            
-                            nextFight.nfts.push(fight.winnerId);
-                            
-                            await nextFight.save();
-                        } else{
-                            //If last fight update the tournament winnerId and runnerupId & Update Tournament to completed. 
-                            currentTournament.winner = fight.winnerId;
-                            currentTournament.runnerUp = fight.loserId;
-                            currentTournament.status = "completed";
-
-                            await currentTournament.save();
-                            
-                        }
-                    }
-                    return currentTournament
-                } else {
-                    throw new Error('Tournament is not ready.')
+                if(tournament.status !== 'ready') {
+                    throw new Error("Tournament is not ready.");
                 }
+                
+                for ( let i = 0; i < tournament.fights.length; i++ ) {
+                    // Determine winner, loser & populate the fightReplay field
+                    const fight = await tournament.fights[i].populate("nfts");
+
+                    [fight.winnerId, fight.loserId] = getWinnerAndLoser(fight.nfts[0].id, fight.nfts[1].id);
+
+                    let fightReplay = getFightReplay(fight.nfts[0].id, fight.nfts[1].id, fight.winnerId);
+                    fight.fightReplay.push(...fightReplay);
+                    
+                    await fight.save();
+                    
+
+                    // Insert fight into the first availible slot on next tier
+                    
+                    if (i !== tournament.fights.length - 1) {
+                        const nextTier = fight.tier + 1;
+
+                        // finds the first fight in next tier that has an empty slot.
+                        const nextFight = await tournament.fights.find((f) => {
+                            return (
+                                f.tier === nextTier &&
+                                f.nfts.length < 2
+                            );
+                        });
+                                
+                        nextFight.nfts.push(fight.winnerId);
+                        await nextFight.save();
+                    } else {
+                        //If last fight update the tournament winnerId and runnerupId & Update Tournament to completed.
+                        tournament.winner = fight.winnerId;
+                        tournament.runnerUp = fight.loserId;
+                        tournament.status = "completed";
+
+                        await tournament.save();
+                    }
+                }
+                return tournament;
 
             } catch (err) {
-                throw new Error(err)
+                throw new Error(err);
             }
-        }
+        },
     },
-
-}
+};

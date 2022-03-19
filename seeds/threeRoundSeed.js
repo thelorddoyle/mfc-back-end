@@ -1,84 +1,146 @@
-const db = require("../config/db")
+const db = require("../config/db");
 const Nft = require("../models/Nft");
 const Fight = require("../models/Fight");
 const Tournament = require("../models/Tournament");
-const {createTournament} = require("../grahpql/resolvers/tournament")
+const { createTournament } = require("../grahpql/resolvers/tournament");
+const { generateToken } = require("../grahpql/resolvers/user");
+const { mintNft } = require("../grahpql/resolvers/nft");
+const nft = require("../grahpql/resolvers/nft");
 
-const background = ['Blue', 'Red', 'Cage', 'Press Conference', 'Gym'];
-const bodyType = ['Ectomorph', 'Endomorph', 'Mesomorph'];
-const jewellery = ['None']
-const tattoos = ['None', 'Dragon', 'Celtic', 'Tribal', 'Kids Names']
-const hairStyle = ['Cropped', 'Bald', 'Flowing', 'Cornrows', 'Spiked']
-const eyeColor = ['Blue', 'Grey', 'Green', 'Red', 'Black']
-const facialHair = ['None']
-const clothing = ['Shirt','Pants','Underwear','Shirt'] 
-const shorts = ['Green', 'Black and white', 'Blue', 'Black', 'Red']
-const mouth = ['Smiling']
-const headgear = ['Hat', 'Sombrero']
-const gloves = ['Red','Yellow','Green','Brown']
-const bruisingOrBlood = ['Black eye','Bloody Lip']
-const image = ['None']
+const background = ["Blue", "Red", "Cage", "Press Conference", "Gym"];
+const bodyType = ["Ectomorph", "Endomorph", "Mesomorph"];
+const jewellery = ["None"];
+const tattoos = ["None", "Dragon", "Celtic", "Tribal", "Kids Names"];
+const hairStyle = ["Cropped", "Bald", "Flowing", "Cornrows", "Spiked"];
+const eyeColor = ["Blue", "Grey", "Green", "Red", "Black"];
+const facialHair = ["None"];
+const clothing = ["Shirt", "Pants", "Underwear", "Shirt"];
+const shorts = ["Green", "Black and white", "Blue", "Black", "Red"];
+const mouth = ["Smiling"];
+const headgear = ["Hat", "Sombrero"];
+const gloves = ["Red", "Yellow", "Green", "Brown"];
+const bruisingOrBlood = ["Black eye", "Bloody Lip"];
+const image = ["None"];
 
+const selectRandomElement = function (array) {
+    return array[
+        Math.floor(Math.random() * array.length) // picks a random index
+    ];
+};
 
-const selectRandom = function(array){
-    return Math.floor(Math.random() * array.length);
-}
+// if you want a variable number of rounds calculate the total number of tournaments.
+const getTournamentCount = (numRounds) => {
+    // get the sum of 2^0 + 2^1 up till round count
+    let tournamentCount = 0;
 
-db.once('open', async () => {
+    for (let i = 0; i < numRounds; i++) {
+        tournamentCount += Math.pow(2, i);
+    }
+
+    return tournamentCount;
+};
+
+const getRoundNum = (tournamentIndex) => {
+    let maxTournamentIndexInRound = 1;
+
+    for (i = 1; i < 10; i++) {
+        if (tournamentIndex <= maxTournamentIndexInRound) {
+            return i;
+        } else {
+            maxTournamentIndexInRound += Math.pow(2, i);
+        }
+    }
+};
+
+//TESTS//
+// console.log(`for 3 round, count should be: ${getTournamentCount(3)} = 7` );
+// console.log(`for 10 round, num of tournaments is: ${getTournamentCount(10)} === 15` );
+
+// console.log(`for fight number: '1', round should be: ${getRoundNum(1)} = 1` );
+// console.log(`for fight number: '2', round should be: ${getRoundNum(2)} = 2` );
+// console.log(`for fight number: '7', round should be: ${getRoundNum(7)} = 3` );
+// console.log(`for fight number: '127', round should be: ${getRoundNum(127)} = 7` );
+// console.log(`for fight number: '128', round should be: ${getRoundNum(128)} = 8` );
+
+// SEED NFTS, TOURNAMENTS and FIGHTS ==> LOGIN and MINT
+db.once("open", async () => {
     await Nft.deleteMany();
     await Fight.deleteMany();
     await Tournament.deleteMany();
 
+    //CREATE TOURNAMENTS (THIS TRIGGERS FIGHT CREATION)
     try {
-        let roundTourney;
-        for (let i = 0; i < 7; i++) {
-            if( i === 0 ){
-                roundTourney = 1;
-            }else if(i === 1 || i <=2 ){
-                roundTourney = 2 ;
-            }else if(i === 3  || i <= 7 ){
-                roundTourney = 3 
-            }
-            const  result =  await createTournament(
-                {
-                    startDate: new Date(),
-                    status: 'pending',
-                    round: roundTourney,
-                }
-              )
+        const numRounds = 3;
+        for (let i = 1; i <= getTournamentCount(numRounds); i++) {
+            const round = getRoundNum(i);
+
+            await createTournament({
+                startDate: new Date(),
+                status: "pending",
+                round,
+            });
         }
-        console.log("tournaments created");
-      
+
+        const firstTournament = await Tournament.findOne();
+        console.log(
+            `Created ${numRounds} Rounds, with ${await Tournament.count()} Tournaments `
+        );
+        console.log(`First tournament ID is: ${firstTournament.id}`);
     } catch (error) {
-        throw new Error(error)
+        throw new Error(error);
     }
 
+    //CREATE NFTS
     try {
-        
-        for (let i = 0; i < 99; i++) {
-                const result = await Nft.create({
-                    background: background[selectRandom(background)],
-                    bodyType: bodyType[selectRandom(bodyType)],
-                    jewellery: jewellery[selectRandom(jewellery)],
-                    tattoos: tattoos[selectRandom(tattoos)],
-                    hairStyle: hairStyle[selectRandom(hairStyle)],
-                    eyeColor: eyeColor[selectRandom(eyeColor)],
-                    facialHair: facialHair[selectRandom(facialHair)],
-                    clothing: clothing[selectRandom(clothing)],
-                    shorts: shorts[selectRandom(shorts)],
-                    mouth: mouth[selectRandom(mouth)],
-                    headgear: headgear[selectRandom(headgear)],
-                    gloves: gloves[selectRandom(gloves)],
-                    bruisingOrBlood: bruisingOrBlood[selectRandom(bruisingOrBlood)],
-                    image: image[selectRandom(image)]
-                })
-
+        for (let i = 0; i < 32; i++) {
+            await Nft.create({
+                background: selectRandomElement(background),
+                bodyType: selectRandomElement(bodyType),
+                jewellery: selectRandomElement(jewellery),
+                tattoos: selectRandomElement(tattoos),
+                hairStyle: selectRandomElement(hairStyle),
+                eyeColor: selectRandomElement(eyeColor),
+                facialHair: selectRandomElement(facialHair),
+                clothing: selectRandomElement(clothing),
+                shorts: selectRandomElement(shorts),
+                mouth: selectRandomElement(mouth),
+                headgear: selectRandomElement(headgear),
+                gloves: selectRandomElement(gloves),
+                bruisingOrBlood: selectRandomElement(bruisingOrBlood),
+                image: selectRandomElement(image),
+            });
         }
-        console.log("Nfts created");
-      
+        console.log(`Created ${await Nft.count()} Nfts`);
     } catch (error) {
-        throw new Error(error)
+        throw new Error(error);
     }
 
+    //LOGIN TO LAURENCE ACCOUNT:
+    try {
+        const login = generateToken({
+            username: "laurence",
+            password: "chicken",
+        });
 
-})
+        console.log("Logged in to 'laurence'");
+        console.log("login token:", login, "(MAY NOT BE A VALID TOKEN)");
+    } catch (err) {
+        console.log(err);
+    }
+
+    // MINTING NFTS
+    try {
+        for (let i = 0; i < 5; i++) {
+            await mintNft("62351e170334c980d7a09953");
+        }
+
+        console.log(
+            `Minted ${await Nft.count({
+                user: "62351e170334c980d7a09953",
+            })} Nfts that belong to user: 'laurence'`
+        );
+    } catch (err) {
+        throw new Error(err);
+    }
+    process.exit(0); // exits the node mode after seeding.
+});

@@ -1,29 +1,29 @@
-const { model, Schema } = require('mongoose');
+const { model, Schema } = require("mongoose");
 
 const fightSchema = new Schema({
     winnerId: String,
     loserId: String,
     fightReplay: [],
-    tournamentIndex: Number,
+    tournamentIndex: Number, // this is the fight position within it's tournament
     tier: Number,
     tournament: {
-        type: Schema.Types.ObjectId, 
-        ref: 'Tournament'
+        type: Schema.Types.ObjectId,
+        ref: "Tournament",
     },
     winner: {
         type: Schema.Types.ObjectId,
-        ref: 'User'
+        ref: "User",
     },
     loser: {
         type: Schema.Types.ObjectId,
-        ref: 'User'
+        ref: "User",
     },
-    nfts: [{
-        type: Schema.Types.ObjectId,
-        ref: 'Nft'
-    }],
+    nfts: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "Nft",
+        },
+    ],
+});
 
-    //TODO: Make association with Tournament
-})
-
-module.exports = model('Fight', fightSchema); 
+module.exports = model("Fight", fightSchema);
