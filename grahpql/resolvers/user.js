@@ -81,7 +81,36 @@ module.exports = {
         },
         async getAllMyTournaments(_, {}, context){
             try {
+                // returns me the user ID of the request
                 const { id } = checkAuth(context);
+
+                let myTournamentsWithDuplicates = [];
+
+                // gets all of the NFTs that this user has
+                try {
+                    const nfts = await Nft.find({ user: id }).populate({
+                        path: 'fights',
+                        populate: {path: 'tournament'}
+                    });
+
+                    for (i=0; i<nfts.length; i++) {
+
+                        // this is an array of fights that each NFT has
+                        const nftFights = nfts[i].fights
+
+                        // go through each array of fights to find the tournament
+                        nftFights.forEach(fight => {
+                            myTournamentsWithDuplicates.push(fight.tournament)
+                        })
+                    }
+                    const myTournaments = [...new Map(myTournamentsWithDuplicates.map(tourney => [tourney._id, tourney])).values()]
+                    return myTournaments
+
+                } catch (error) {
+                    throw new Error(error);
+                }
+
+
             } catch (error) {
                 throw new Error(error);
 

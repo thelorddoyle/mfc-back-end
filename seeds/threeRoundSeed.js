@@ -2,6 +2,7 @@ const db = require("../config/db");
 const Nft = require("../models/Nft");
 const Fight = require("../models/Fight");
 const Tournament = require("../models/Tournament");
+const User = require("../models/User")
 const { createTournament } = require("../grahpql/resolvers/tournament");
 const { generateToken } = require("../grahpql/resolvers/user");
 const { mintNft } = require("../grahpql/resolvers/nft");
@@ -67,6 +68,7 @@ db.once("open", async () => {
     await Nft.deleteMany();
     await Fight.deleteMany();
     await Tournament.deleteMany();
+    await User.deleteMany();
 
     //CREATE TOURNAMENTS (THIS TRIGGERS FIGHT CREATION)
     try {
@@ -115,6 +117,31 @@ db.once("open", async () => {
         throw new Error(error);
     }
 
+    // REGISTER LAURENCE'S ACCOUNT AND MINT NFT's:
+    try {
+        const laurence = await User.create({
+            username: 'laurence',
+            email: 'laurence@ga.com',
+            password: 'chicken'
+        })
+        console.log("Created the user: 'laurence', password: 'chicken'");
+
+        // MINTING NFTS
+
+        for (let i = 0; i < 32; i++) {
+            await mintNft(laurence.id);
+        }
+
+        console.log(
+            `Minted ${await Nft.count({
+                user: `${laurence.id}`,
+            })} Nfts that belong to user: 'laurence'. His ID is: ${laurence.id}`
+        );
+
+    } catch (err) {
+        console.log(err)
+    }
+
     //LOGIN TO LAURENCE ACCOUNT:
     try {
         const login = generateToken({
@@ -128,19 +155,5 @@ db.once("open", async () => {
         console.log(err);
     }
 
-    // MINTING NFTS
-    try {
-        for (let i = 0; i < 32; i++) {
-            await mintNft("6235994f6fc7469218d26cf1");
-        }
-
-        console.log(
-            `Minted ${await Nft.count({
-                user: "6235994f6fc7469218d26cf1",
-            })} Nfts that belong to user: 'laurence'`
-        );
-    } catch (err) {
-        throw new Error(err);
-    }
     process.exit(0); // exits the node mode after seeding.
 });
