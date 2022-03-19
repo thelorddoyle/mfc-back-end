@@ -73,6 +73,7 @@ const createTournament = async function (tournamentDetails) {
                 nfts: [],
                 fightIndex,
                 tier,
+                tournament: tournament.id
             });
 
             fightsArray.push(generateFight._id);
@@ -107,7 +108,7 @@ module.exports = {
 
         async getTournament(_, { tournamentId }) {
             try {
-                const result = await Tournament.findById(tournamentId);
+                const result = await Tournament.findById(tournamentId).populate('fights');
                 if (result) {
                     return result;
                 } else {

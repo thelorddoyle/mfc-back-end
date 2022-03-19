@@ -4,11 +4,13 @@ module.exports = gql`
 
     type Fight{
         id: ID!,
+        fightIndex: Int!,
+        tier: Int!
         winnerId: String,
         loserId: String,
         fightReplay: [FightMove]!,
-        fightIndex: Int!,
-        nfts: [Nft]
+        nfts: [Nft],
+        tournament: Tournament
     }
 
     type FightMove{
@@ -23,16 +25,14 @@ module.exports = gql`
         loserId: String,
         fightReplay: [CreateFightMove],
         fightIndex: Int,
-        nfts: [CreateNft]
+        nfts: [NftDetails]
     }
-
         
     input CreateFightMove{
         attackerId: String!,
         defenderId: String!,
         body: String!,
     }
-
 
     type Query{
 

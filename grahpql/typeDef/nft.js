@@ -20,25 +20,24 @@ module.exports = gql`
         gloves: String!,
         bruisingOrBlood: String!,
         image: String!,
-        
+        fights:[Fight]
     }
 
-    input CreateNft{
-        id: ID,
-        background: String,
-        bodyType: String,
-        jewellery: String, 
-        tattoos: String,
-        hairStyle: String,
-        eyeColor: String,
-        facialHair: String,
-        clothing: String, 
-        shorts: String,
-        mouth: String,
-        headgear: String,
-        gloves: String,
-        bruisingOrBlood: String,
-        image: String
+    input NftDetails{
+        background: String!,
+        bodyType: String!,
+        jewellery: String!, 
+        tattoos: String!,
+        hairStyle: String!,
+        eyeColor: String!,
+        facialHair: String!,
+        clothing: String!, 
+        shorts: String!,
+        mouth: String!,
+        headgear: String!,
+        gloves: String!,
+        bruisingOrBlood: String!,
+        image: String!
     }
 
     type Query{
@@ -49,9 +48,8 @@ module.exports = gql`
 
 	type Mutation{
 	
-	   	createNft(createNft: CreateNft): Nft!,
+	   	createNft(nftDetails: NftDetails!): Nft!,
 		mintNft: Nft!,	
-        
 		
     }
 

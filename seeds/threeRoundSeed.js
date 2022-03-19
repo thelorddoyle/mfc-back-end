@@ -131,12 +131,12 @@ db.once("open", async () => {
     // MINTING NFTS
     try {
         for (let i = 0; i < 32; i++) {
-            await mintNft("62351e170334c980d7a09953");
+            await mintNft("6235994f6fc7469218d26cf1");
         }
 
         console.log(
             `Minted ${await Nft.count({
-                user: "62351e170334c980d7a09953",
+                user: "6235994f6fc7469218d26cf1",
             })} Nfts that belong to user: 'laurence'`
         );
     } catch (err) {

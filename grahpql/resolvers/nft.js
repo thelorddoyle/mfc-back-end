@@ -6,6 +6,7 @@ const checkAuth = require("../../middleware/checkAuth");
 const { AuthenticationError } = require("apollo-server");
 const { getCurrentTournament } = require("./tournament");
 const { UserInputError } = require("apollo-server");
+const tournament = require("./tournament");
 
 const insertFirstFight = async (tournament, nftId) => {
     const round = tournament.round;
@@ -54,7 +55,10 @@ const putNftIntoAvailibleFights = async function (nftId) {
                 for (let i = 0; i < fights.length; i++) {
                     const length = fights[i].nfts.length;
                     if (length === 0 && fights[i].fightIndex < 2) {
-                        fights[i].nfts.push(nftId);
+                        fights[i].nfts.push(nftId); // TODO: for each of the nfts we also assign their fights field with the id. 
+                        
+                        addFightToNft(fights[i].id, nftId);
+
                         await fights[i].save();
                         break breakingLoops;
                     }
@@ -67,16 +71,19 @@ const putNftIntoAvailibleFights = async function (nftId) {
             }
         }
 
-        // if (!firstFight){ // when
-        // 	 throw new UserInputError('Tournament is full');
-        // }
-
         const tournaments = await getCurrentTournament();
         await tournaments.populate("fights");
     } catch (error) {
         throw new UserInputError(error);
     }
 };
+
+const addFightToNft = async (fightId, nftId) => {
+    const nft = await Nft.findById(nftId).populate('fights');
+    
+    nft.fights.push(fightId);
+    await nft.save();
+}
 
 const mintNft = async (id) => {
     try {
@@ -112,7 +119,25 @@ module.exports = {
 
         async getNft(_, { nftID }) {
             try {
-                const result = await Nft.findById(nftID).populate('user');
+                const result = await Nft.findById(nftID).populate({
+                    path: 'fights',
+                    populate: {path: 'tournament'}
+                });
+                
+                if (result) {
+                    return result;
+                } else {
+                    throw new Error("Nft not found");
+                }
+            } catch (error) {
+                throw new Error(error);
+            }
+        },
+
+        async getNftFights (_, { nftID }) {
+            try {
+                const result = await Nft.findById(nftID).populate('fights');
+                console.log()
                 if (result) {
                     return result;
                 } else {
@@ -121,17 +146,13 @@ module.exports = {
             } catch (error) {
                 throw new Error("Nft not found");
             }
-        },
-
-        async getNftFights (_, { nftID }) {
-            
         }
     },
 
     Mutation: {
-        async createNft(_, { createNft }, context) {
+        async createNft(_, { nftDetails }, context) {
             try {
-                const nft = await Nft({ ...createNft });
+                const nft = await Nft({ ...nftDetails });
                 await nft.save();
 
                 return nft;

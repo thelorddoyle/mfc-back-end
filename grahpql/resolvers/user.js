@@ -22,6 +22,12 @@ function generateToken(user) {
     );
 }
 
+const checkPositive = (amount) => {
+    if (amount < 0){
+        throw new UserInputError('You cannot input a negative number')
+    }
+}
+
 module.exports = {
     generateToken, 
     Query: {
@@ -52,15 +58,32 @@ module.exports = {
             }
         },
 
-        async getUserNfts(_, __, context) {
+        async getMyNfts(_, __, context) {
             try {
                 const { id } = checkAuth(context);
-                const nfts = await Nft.find({ user: id }).populate("user");
+                const nfts = await Nft.find({ user: id }).populate('fights');
                 return nfts;
             } catch (error) {
                 throw new Error(error);
             }
         },
+
+        async getUserNfts(_, {userID}) {
+            try {
+                const nfts = await Nft.find({ user: userID }).populate("user");
+                return nfts;
+            } catch (error) {
+                throw new Error(error);
+            }
+        },
+        async getAllMyTournaments(_, {}, context){
+            try {
+                const { id } = checkAuth(context);
+            } catch (error) {
+                throw new Error(error);
+
+            }
+        }
     },
 
     //Mutations allow you to modify server-side data, and it also returns an object based on the operation performed.
@@ -162,6 +185,8 @@ module.exports = {
             const { id } = checkAuth(context);
 
             try {
+                checkPositive(amount)
+                
                 const user = await User.findOne({ id });
                 if (user) {
                     user.amountInWallet = user.amountInWallet + amount;
@@ -179,6 +204,8 @@ module.exports = {
             const { username } = checkAuth(context);
 
             try {
+                checkPositive(amount)
+                
                 const user = await User.findOne({ username });
 
                 if (user) {

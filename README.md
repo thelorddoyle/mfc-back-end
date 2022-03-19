@@ -28,9 +28,9 @@ Unique mints for each round:
     6.2. ~~generate a random winner of the fight~~
     6.3. ~~pass nft1, nft2 and the winner of the fight to the fightGenerator~~
     6.4. ~~have the fight generator return a fightReplay object that is inserted in to the fight~~
-    6.5. ~~update Fight with all of it's available fields (winnerId, loserId, fightReplay, tournamentIndex etc)~~
+    6.5. ~~update Fight with all of it's available fields (winnerId, loserId, fightReplay, fightIndex etc)~~
     6.5.1 ~~add the tiers to the seeds~~
-    6.6. ~~after fight has been resolved, move the winning NFT in to the next fight @ tournamentIndex 3~~
+    6.6. ~~after fight has been resolved, move the winning NFT in to the next fight @ fightIndex 3~~
     6.7. ~~loop until tournament has "completed".~~
     6.8. ~~update tournament winner and loser fields~~
 7. Chain the Resolving of all tournament (DAN PLEASE CONFIRM IF THIS IS CORRECT BUSINESS LOGIC)

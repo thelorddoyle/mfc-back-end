@@ -18,7 +18,11 @@ const nftSchema = new Schema({
   user:{
     type: Schema.Types.ObjectId,
     ref: 'User'
-  }
+  },
+  fights:[{
+    type: Schema.Types.ObjectId,
+    ref: 'Fight'
+  }]
 })
 
 module.exports = model('Nft', nftSchema); 

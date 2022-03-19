@@ -22,7 +22,6 @@ module.exports = gql`
     
         email: String
         username: String
-        createdAt: Date
         
     },
 
@@ -39,7 +38,9 @@ module.exports = gql`
 		
         getUser(userID: ID!): User,
         getAllUsers: [User],
-        getUserNfts: [Nft],
+        getUserNfts(userID: ID!): [Nft],
+        getMyNfts: [Nft],
+        getAllMyTournaments: [Tournament]
 		
 	}
 
