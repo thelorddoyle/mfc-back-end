@@ -110,7 +110,7 @@ const mintNft = async (id) => {
 }
 
 module.exports = {
-    mintNft, 
+    mintNft,
     Query: {
         async getNfts() {
             try {
