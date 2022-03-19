@@ -6,7 +6,7 @@ const User = require("../models/User")
 const { createTournament } = require("../grahpql/resolvers/tournament");
 const { generateToken } = require("../grahpql/resolvers/user");
 const { mintNft } = require("../grahpql/resolvers/nft");
-const nft = require("../grahpql/resolvers/nft");
+const bcrypt = require('bcryptjs');
 
 const background = ["Blue", "Red", "Cage", "Press Conference", "Gym"];
 const bodyType = ["Ectomorph", "Endomorph", "Mesomorph"];
@@ -119,10 +119,15 @@ db.once("open", async () => {
 
     // REGISTER LAURENCE'S ACCOUNT AND MINT NFT's:
     try {
+
+        password = await bcrypt.hash('chicken', 12); //Encrypt password before saving it
+
         const laurence = await User.create({
             username: 'laurence',
             email: 'laurence@ga.com',
-            password: 'chicken'
+            password: password,
+            amountInWallet: 0,
+            createdAt: new Date()
         })
         console.log("Created the user: 'laurence', password: 'chicken'");
 
