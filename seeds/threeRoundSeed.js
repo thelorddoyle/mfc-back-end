@@ -4,6 +4,7 @@ const Fight = require("../models/Fight");
 const Tournament = require("../models/Tournament");
 const { createTournament } = require("../grahpql/resolvers/tournament");
 const { generateToken } = require("../grahpql/resolvers/user");
+const { mintNft } = require("../grahpql/resolvers/nft");
 
 const background = ["Blue", "Red", "Cage", "Press Conference", "Gym"];
 const bodyType = ["Ectomorph", "Endomorph", "Mesomorph"];
@@ -103,9 +104,15 @@ db.once("open", async () => {
 
     // MINTING NFTS
     try {
-        
+        for(let i = 0; i < 5; i++ ){
+            mintNft("62351e170334c980d7a09953") //TODO: This is not 
+        }
+        // console.log(Nft.findOne())
+
+        // console.log(`Minted ${await Nft.count({user: '62351e170334c980d7a09953'})} Nfts`);
+
     } catch (err) {
-        
+        throw new Error(err)
     }
     
     process.exit(0); // exits the node mode after seeding.

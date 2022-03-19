@@ -82,7 +82,27 @@ const putNftIntoAvailibleFights = async function (nftId) {
     }
 };
 
+const mintNft = async (id) => {
+    try {
+        const nft = await Nft.findOne({ user: { $exists: false } });
+
+        if (nft) {
+            nft.user = id; // this saves a reference to the User with the 'userId'
+            await nft.save();
+            await nft.populate("user"); // adds the user reference obj
+
+            putNftIntoAvailibleFights(nft.id);
+            return nft;
+        } else {
+            throw new Error("We are out of NFTs");
+        }
+    } catch (err) {
+        throw new Error(err);
+    }
+}
+
 module.exports = {
+    mintNft, 
     Query: {
         async getNfts() {
             try {
@@ -124,22 +144,7 @@ module.exports = {
             // TODO: perform a check to see if funds available.
             const { id } = checkAuth(context);
 
-            try {
-                const nft = await Nft.findOne({ user: { $exists: false } });
-
-                if (nft) {
-                    nft.user = id; // this saves a reference to the User with the 'userId'
-                    await nft.save();
-                    await nft.populate("user"); // adds the user reference obj
-
-                    putNftIntoAvailibleFights(nft.id);
-                    return nft;
-                } else {
-                    throw new Error("We are out of NFTs");
-                }
-            } catch (err) {
-                throw new Error(err);
-            }
+            return await mintNft(id);
         },
     },
 };
