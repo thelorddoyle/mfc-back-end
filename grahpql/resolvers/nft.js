@@ -14,7 +14,8 @@ const insertFirstFight = async (tournament, nftId) => {
 
     for (let i = 0; i < fights.length; i++) {
         const nftSlotsOccupied = fights[i].nfts.length;
-
+        const round = tournament.round;
+        
         //TODO: why does this need to be here? It's triggering every loop (should only be when you assign that seat)
         //TODO: REFACTOR THIS FIRST. 
         if (fights[15].nfts.length === 1) {
@@ -22,11 +23,13 @@ const insertFirstFight = async (tournament, nftId) => {
             await tournament.save();
         }
         if (round === 1 && (nftSlotsOccupied < 2 )) {
+            addFightToNft(fights[i].id, nftId);
             fights[i].nfts.push(nftId);
             await fights[i].save();
             break;
         }
         if (round > 1 && nftSlotsOccupied === 1) {
+            addFightToNft(fights[i].id, nftId);
             fights[i].nfts.push(nftId);
             await fights[i].save();
             break;
@@ -52,14 +55,15 @@ const putNftIntoAvailibleFights = async function (nftId) {
             breakingLoops: for (let j = 0; j < allTournamentsInRound.length; j++) {
                 const fights = allTournamentsInRound[j].fights;
 
-                for (let i = 0; i < fights.length; i++) {
-                    const length = fights[i].nfts.length;
-                    if (length === 0 && fights[i].fightIndex < 2) {
-                        fights[i].nfts.push(nftId); // TODO: for each of the nfts we also assign their fights field with the id. 
+                // loop over all fights and find the first one with an empty slot
+                for (let k = 0; k < fights.length; k++) {
+                    const length = fights[k].nfts.length;
+                    if (length === 0 && fights[k].fightIndex < 16) { // this number cannot be hard
+                        fights[k].nfts.push(nftId); // TODO: for each of the nfts we also assign their fights field with the id. 
                         
-                        addFightToNft(fights[i].id, nftId);
+                        addFightToNft(fights[k].id, nftId);
 
-                        await fights[i].save();
+                        await fights[k].save();
                         break breakingLoops;
                     }
                 }
@@ -106,7 +110,7 @@ const mintNft = async (id) => {
 }
 
 module.exports = {
-    mintNft, 
+    mintNft,
     Query: {
         async getNfts() {
             try {

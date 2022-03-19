@@ -5,7 +5,7 @@ const fightSchema = new Schema({
     loserId: String,
     fightReplay: [],
     fightIndex: Number, // this is the fight position within it's tournament
-    tier: Number,
+    tier: Number, // this is the layer of fights that the NFT is in (starts at 1 and goes to 5)
     tournament: {
         type: Schema.Types.ObjectId,
         ref: "Tournament",
