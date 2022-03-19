@@ -70,26 +70,12 @@ const putNftIntoAvailibleFights = async function (nftId) {
                 roundNumberTracker++;
             }
         }
-<<<<<<< HEAD
-		
-		// if (!firstFight){ // when 
-		// 	 throw new UserInputError('Tournament is full');
-		// } 
-
-		const  tournaments = await getCurrentTournament();
-		await tournaments.populate('fights');
-	} catch (error) {
-
-		throw new UserInputError(error);
-	}
-=======
 
         const tournaments = await getCurrentTournament();
         await tournaments.populate("fights");
     } catch (error) {
         throw new UserInputError(error);
     }
->>>>>>> d322120ab6dc1b24ce3b7df7159b9c25531352c6
 };
 
 const addFightToNft = async (fightId, nftId) => {
