@@ -15,11 +15,12 @@ const insertFirstFight = async (tournament, nftId) => {
         const nftSlotsOccupied = fights[i].nfts.length;
 
         //TODO: why does this need to be here? It's triggering every loop (should only be when you assign that seat)
-        if (fights[1].nfts.length === 1) {
+        //TODO: REFACTOR THIS FIRST. 
+        if (fights[15].nfts.length === 1) {
             tournament.status = "ready";
             await tournament.save();
         }
-        if (round === 1 && (nftSlotsOccupied === 0 || nftSlotsOccupied === 1)) {
+        if (round === 1 && (nftSlotsOccupied < 2 )) {
             fights[i].nfts.push(nftId);
             await fights[i].save();
             break;
@@ -33,7 +34,6 @@ const insertFirstFight = async (tournament, nftId) => {
 };
 
 const putNftIntoAvailibleFights = async function (nftId) {
-    //
     try {
         const tournament = await getCurrentTournament(); // get the first "status: pending" tournament
         await tournament.populate("fights");
@@ -41,23 +41,19 @@ const putNftIntoAvailibleFights = async function (nftId) {
         let roundNumberTracker = tournament.round + 1;
         await insertFirstFight(tournament, nftId);
 
-        const remainingRounds = 3 - tournament.round; //TODO: change this this '3' when the
+        const remainingRounds = 3 - tournament.round;
         for (i = 0; i < remainingRounds; i++) {
             let allTournamentsInRound = await Tournament.find({
                 round: roundNumberTracker,
             }).populate("fights");
 
             // the break below will bubble up to here.
-            breakingLoops: for (
-                let j = 0;
-                j < allTournamentsInRound.length;
-                j++
-            ) {
+            breakingLoops: for (let j = 0; j < allTournamentsInRound.length; j++) {
                 const fights = allTournamentsInRound[j].fights;
 
                 for (let i = 0; i < fights.length; i++) {
                     const length = fights[i].nfts.length;
-                    if (length === 0 && fights[i].tournamentIndex < 2) {
+                    if (length === 0 && fights[i].fightIndex < 2) {
                         fights[i].nfts.push(nftId);
                         await fights[i].save();
                         break breakingLoops;
@@ -126,6 +122,10 @@ module.exports = {
                 throw new Error("Nft not found");
             }
         },
+
+        async getNftFights (_, { nftID }) {
+            
+        }
     },
 
     Mutation: {
