@@ -132,7 +132,11 @@ module.exports = {
                 try {
                     const nfts = await Nft.find({ user: id }).populate({
                         path: 'fights',
-                        populate: {path: 'tournament'}
+                        populate: {path: 'tournament',
+                            populate: {path: 'fights',
+                                populate: {path: 'nfts'}
+                            }
+                        }
                     });
 
                     for (i=0; i<nfts.length; i++) {

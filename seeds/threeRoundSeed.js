@@ -21,7 +21,10 @@ const mouth = ["Smiling"];
 const headgear = ["Hat", "Sombrero"];
 const gloves = ["Red", "Yellow", "Green", "Brown"];
 const bruisingOrBlood = ["Black eye", "Bloody Lip"];
-const image = ["None"];
+const image = ["https://res.cloudinary.com/metaverse-fc/image/upload/v1647771047/banner-fighter2_wt8tpy.png",
+"https://res.cloudinary.com/metaverse-fc/image/upload/v1647771047/banner-fighter1_trmi2m.png",
+"https://res.cloudinary.com/metaverse-fc/image/upload/v1647771046/banner1_wbjhyi.png",
+"https://res.cloudinary.com/metaverse-fc/image/upload/v1647771046/banner2_rruhkv.png];"]
 
 const selectRandomElement = function (array) {
     return array[
@@ -162,3 +165,6 @@ db.once("open", async () => {
 
     process.exit(0); // exits the node mode after seeding.
 });
+
+
+// TODO: ADD IN MORE THAN ONE ACCOUNT. 
