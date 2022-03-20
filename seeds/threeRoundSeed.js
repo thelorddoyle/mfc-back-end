@@ -94,7 +94,7 @@ db.once("open", async () => {
 
     //CREATE NFTS
     try {
-        for (let i = 0; i < 64; i++) {
+        for (let i = 0; i < 65; i++) {
             await Nft.create({
                 background: selectRandomElement(background),
                 bodyType: selectRandomElement(bodyType),
@@ -133,7 +133,7 @@ db.once("open", async () => {
 
         // MINTING NFTS
 
-        for (let i = 0; i < 32; i++) {
+        for (let i = 0; i < 64; i++) {
             await mintNft(laurence.id);
         }
 
