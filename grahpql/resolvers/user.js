@@ -61,6 +61,7 @@ module.exports = {
         async getMyNfts(_, __, context) {
             try {
                 const { id } = checkAuth(context);
+                console.log('')
                 const nfts = await Nft.find({ user: id }).populate('fights');
                 return nfts;
             } catch (error) {
@@ -136,7 +137,7 @@ module.exports = {
             //Check if passowrd matchs
             const compareUsers = await bcrypt.compare(password, user.password);
             if (!compareUsers) {
-                errors.loging = "Wrong credentials";
+                errors.login = "Wrong credentials";
                 throw new UserInputError("Wrong Credentials", { errors });
             }
             //If everything checks we create new token session and return it

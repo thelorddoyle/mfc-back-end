@@ -9,7 +9,7 @@ const { UserInputError } = require("apollo-server");
 const tournament = require("./tournament");
 
 const insertFirstFight = async (tournament, nftId) => {
-    const round = tournament.round;
+    const round = tournament.round; //TODO: delete this
     const fights = tournament.fights;
 
     for (let i = 0; i < fights.length; i++) {
@@ -17,21 +17,26 @@ const insertFirstFight = async (tournament, nftId) => {
         const round = tournament.round;
         
         //TODO: why does this need to be here? It's triggering every loop (should only be when you assign that seat)
-        //TODO: REFACTOR THIS FIRST. 
-        if (fights[15].nfts.length === 1) {
-            tournament.status = "ready";
-            await tournament.save();
-        }
+
         if (round === 1 && (nftSlotsOccupied < 2 )) {
             addFightToNft(fights[i].id, nftId);
             fights[i].nfts.push(nftId);
             await fights[i].save();
+
+            if (fights[15].nfts.length === 2) {
+                tournament.status = "ready";
+                await tournament.save();
+            }
+
             break;
-        }
-        if (round > 1 && nftSlotsOccupied === 1) {
+        } else if (round > 1 && nftSlotsOccupied === 1) {
             addFightToNft(fights[i].id, nftId);
             fights[i].nfts.push(nftId);
             await fights[i].save();
+            if (fights[15].nfts.length === 2) {
+                tournament.status = "ready";
+                await tournament.save();
+            }
             break;
         }
     }
@@ -91,6 +96,7 @@ const addFightToNft = async (fightId, nftId) => {
 
 const mintNft = async (id) => {
     try {
+        
         const nft = await Nft.findOne({ user: { $exists: false } });
 
         if (nft) {
@@ -166,7 +172,7 @@ module.exports = {
         },
 
         // Assigns NFT UserId & enters them into one pending tournaments in each round.
-        async mintNft(_, { }, context) {
+        async mintNft(_, __, context) {
             // TODO: perform a check to see if funds available.
             const { id } = checkAuth(context);
 
