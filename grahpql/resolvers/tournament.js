@@ -109,7 +109,10 @@ module.exports = {
 
         async getTournament(_, { tournamentId }) {
             try {
-                const result = await Tournament.findById(tournamentId).populate('fights');
+                const result = await Tournament.findById(tournamentId).populate({
+                    path: 'fights',
+                    populate: {path: 'nfts'}
+                });
                 if (result) {
                     return result;
                 } else {
