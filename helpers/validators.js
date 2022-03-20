@@ -83,13 +83,39 @@ const validateLogin = (username, password) => {
     };
 };
 
-const validateFundsAvailible = (currentUser) => {
-    
+const validateRemoveAmount = async (userId, amount) => {
+    let errors = {};
+
+    const user = await User.findById(userId);
+
+    if(amount > user.amountInWallet){
+        errors.funds = "You do not have sufficient funds to perform this transaction"
+    }
+    if (amount < 0) {
+        errors.amount = "You cannot use a negative value in transaction"
+    }
+    return {
+        errors,
+        valid: Object.keys(errors).length < 1,
+    };
 }
+
+const validateAmountPositive = async (amount) => {
+    let errors = {}
+    if (amount < 0) {
+        errors.amount = "You cannot use a negative value in transaction"
+    }
+    return {
+        errors,
+        valid: Object.keys(errors).length < 1,
+    };
+}
+
 
 module.exports = {
     validateUser,
     validateLogin,
     validateUserUpdate,
-    validateFundsAvailible
+    validateRemoveAmount,
+    validateAmountPositive
 };

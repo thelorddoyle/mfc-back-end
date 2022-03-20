@@ -5,7 +5,8 @@ const { UserInputError } = require("apollo-server");
 const {
     validateUser,
     validateLogin,
-    validateUserUpdate
+    validateUserUpdate,
+    validateRemoveAmount
 } = require("../../helpers/validators");
 const checkAuth = require("../../middleware/checkAuth");
 const Nft = require("../../models/Nft");
@@ -47,9 +48,29 @@ const addAmount = async (userId, amount) => {
     }
 }
 
+const removeAmount = async (userId, amount) => {
+    try {
+
+        const { errors, valid } = await validateRemoveAmount(userId, amount);
+        if (!valid) throw new UserInputError("Errors", { errors });
+        
+        const user = await User.findOne({ userId });
+        if (user) {
+            user.amountInWallet = user.amountInWallet - amount;
+            await user.save();
+            return user;
+        } else {
+            throw new UserInputError("User does not exist.");
+        }
+    } catch (err) {
+        throw new UserInputError(err);
+    }
+}
+
 module.exports = {
     generateToken, 
     addAmount,
+    removeAmount,
     Query: {
         //NOTE: we can probably just use the auth context.
         async getUser(_, { userID }) {

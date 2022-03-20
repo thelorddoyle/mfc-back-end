@@ -126,14 +126,14 @@ db.once("open", async () => {
             username: 'laurence',
             email: 'laurence@ga.com',
             password: password,
-            amountInWallet: 0,
+            amountInWallet: 5,
             createdAt: new Date()
         })
         console.log("Created the user: 'laurence', password: 'chicken'");
 
         // MINTING NFTS
 
-        for (let i = 0; i < 64; i++) {
+        for (let i = 0; i < 32; i++) {
             await mintNft(laurence.id);
         }
 

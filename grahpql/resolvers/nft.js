@@ -1,45 +1,49 @@
 //RESOLVERS
+const { AuthenticationError } = require("apollo-server");
+const { UserInputError } = require("apollo-server");
 //For each query or mutuation there is a resolver, which processes any sort of logic
+const { getCurrentTournament } = require("./tournament");
+const { removeAmount } = require('./user');
 const Nft = require("../../models/Nft");
 const Tournament = require("../../models/Tournament");
 const checkAuth = require("../../middleware/checkAuth");
-const { AuthenticationError } = require("apollo-server");
-const { getCurrentTournament } = require("./tournament");
-const { UserInputError } = require("apollo-server");
+const { validateRemoveAmount } = require("../../helpers/validators");
 const tournament = require("./tournament");
 
 const insertFirstFight = async (tournament, nftId) => {
-    const round = tournament.round; //TODO: delete this
+    const round = tournament.round;
     const fights = tournament.fights;
 
+    const checkFinalFight = async () => {
+        if (fights[15].nfts.length === 2) {
+            tournament.status = "ready";
+            await tournament.save();
+        }
+    }
+    
     for (let i = 0; i < fights.length; i++) {
         const nftSlotsOccupied = fights[i].nfts.length;
-        const round = tournament.round;
         
-        //TODO: why does this need to be here? It's triggering every loop (should only be when you assign that seat)
-
         if (round === 1 && (nftSlotsOccupied < 2 )) {
             addFightToNft(fights[i].id, nftId);
             fights[i].nfts.push(nftId);
             await fights[i].save();
 
-            if (fights[15].nfts.length === 2) {
-                tournament.status = "ready";
-                await tournament.save();
-            }
+            await checkFinalFight();
 
             break;
         } else if (round > 1 && nftSlotsOccupied === 1) {
             addFightToNft(fights[i].id, nftId);
             fights[i].nfts.push(nftId);
             await fights[i].save();
-            if (fights[15].nfts.length === 2) {
-                tournament.status = "ready";
-                await tournament.save();
-            }
+
+            await checkFinalFight();
+
             break;
         }
     }
+
+
 };
 
 const putNftIntoAvailibleFights = async function (nftId) {
@@ -94,24 +98,25 @@ const addFightToNft = async (fightId, nftId) => {
     await nft.save();
 }
 
-const mintNft = async (id) => {
+const mintNft = async (userId) => {
     try {
-        
-        const nft = await Nft.findOne({ user: { $exists: false } });
+        const nftCost = 0.1;
 
+        removeAmount(userId, nftCost);//TODO: remove the funds from account 
+
+        const nft = await Nft.findOne({ user: { $exists: false } });
         if (nft) {
-            nft.user = id; // this saves a reference to the User with the 'userId'
+            nft.user = userId; // this saves a reference to the User with the 'userId'
             await nft.save();
             await nft.populate("user"); // adds the user reference obj
-
             await putNftIntoAvailibleFights(nft.id);
             
             return nft;
         } else {
-            throw new Error("We are out of NFTs");
+            throw new UserInputError("We are out of NFTs");
         }
     } catch (err) {
-        throw new Error(err);
+        throw new UserInputError(err);
     }
 }
 
