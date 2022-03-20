@@ -28,8 +28,27 @@ const checkPositive = (amount) => {
     }
 }
 
+const addAmount = async (userId, amount) => {
+    try {
+        checkPositive(amount)
+        // make proper validation for these amounts, 
+        
+        const user = await User.findOne({ userId });
+        if (user) {
+            user.amountInWallet = user.amountInWallet + amount;
+            await user.save();
+            return user;
+        } else {
+            throw new Error("User does not exist.");
+        }
+    } catch (err) {
+        throw new Error(err);
+    }
+}
+
 module.exports = {
     generateToken, 
+    addAmount,
     Query: {
         //NOTE: we can probably just use the auth context.
         async getUser(_, { userID }) {
@@ -213,24 +232,13 @@ module.exports = {
             }
         },
 
-        async addAmount(_, { amount }, context) {
+        async addAmount(_, { userId ,amount }, context) {
             // NOTE: this will probably be swapped out for defi integration.
-            const { id } = checkAuth(context);
+            // const { id } = checkAuth(context);
+            
+            return await addAmount(userId, amount);
 
-            try {
-                checkPositive(amount)
-                
-                const user = await User.findOne({ id });
-                if (user) {
-                    user.amountInWallet = user.amountInWallet + amount;
-                    await user.save();
-                    return user;
-                } else {
-                    throw new Error("User does not exist.");
-                }
-            } catch (err) {
-                throw new Error(err);
-            }
+            
         },
 
         async removeAmount(_, { amount }, context) {
@@ -238,7 +246,6 @@ module.exports = {
 
             try {
                 checkPositive(amount)
-                
                 const user = await User.findOne({ username });
 
                 if (user) {

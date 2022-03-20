@@ -48,7 +48,7 @@ module.exports = gql`
 
 		register(registerInput: RegisterInput): User!,
 		login(username: String!, password: String!): User!,
-		addAmount(amount: Float!): User!,
+		addAmount(userId: ID!, amount: Float!): User!,
 		removeAmount(amount: Float!): User!,
 		updateUser(user: UserInput): User!,
 		deleteUser(userId: ID!): Result!

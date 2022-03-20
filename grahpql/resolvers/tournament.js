@@ -3,6 +3,7 @@ const Fight = require("../../models/Fight");
 const checkAuth = require("../../middleware/checkAuth");
 const { AuthenticationError } = require("apollo-server");
 const { generateFightResults } = require("../../helpers/fightReplayGenerator");
+const { addAmount } = require("../resolvers/user");
 
 // helper function that just randomly chooses the order of two nfts in an array. 
 const getWinnerAndLoser = function (nft1, nft2) {
@@ -201,6 +202,13 @@ module.exports = {
                         tournament.winner = fight.winnerId;
                         tournament.runnerUp = fight.loserId;
                         tournament.status = "completed";
+
+                        //TODO: Find the two user accounts the NFT belongs to. 
+                        await tournament.populate('winner');
+                        tournament.populate('runnerUp');
+
+                        await addAmount(tournament.winner.id, 0.75);
+                        await addAmount(tournament.runnerUp.id, 0.25);
 
                         await tournament.save();
                     }
