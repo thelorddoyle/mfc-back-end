@@ -61,6 +61,7 @@ module.exports = {
         async getMyNfts(_, __, context) {
             try {
                 const { id } = checkAuth(context);
+                console.log('')
                 const nfts = await Nft.find({ user: id }).populate('fights');
                 return nfts;
             } catch (error) {
