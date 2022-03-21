@@ -156,14 +156,6 @@ db.once("open", async () => {
                 await mintNft(userIds[j]);
             }
         }
-        
-        // console.log(
-        //     `Minted ${await Nft.count({
-        //         user: `${userIds[0]}`,
-        //     })} Nfts that belong to user: 'laurence'. His ID is: ${userIds[0]}`
-        // );
-
-
 
     } catch (err) {
         console.log(err)
