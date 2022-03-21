@@ -1,3 +1,5 @@
+const bcrypt = require('bcryptjs');
+
 const db = require("../config/db");
 const Nft = require("../models/Nft");
 const Fight = require("../models/Fight");
@@ -6,7 +8,6 @@ const User = require("../models/User")
 const { createTournament } = require("../grahpql/resolvers/tournament");
 const { generateToken } = require("../grahpql/resolvers/user");
 const { mintNft } = require("../grahpql/resolvers/nft");
-const bcrypt = require('bcryptjs');
 
 const background = ["Blue", "Red", "Cage", "Press Conference", "Gym"];
 const bodyType = ["Ectomorph", "Endomorph", "Mesomorph"];
@@ -33,6 +34,8 @@ const image = ["https://res.cloudinary.com/metaverse-fc/image/upload/v1647822167
 "https://res.cloudinary.com/metaverse-fc/image/upload/v1647771046/NFTs/card2_xmnadb.jpg",
 "https://res.cloudinary.com/metaverse-fc/image/upload/v1647771046/NFTs/card1_nvag4n.jpg"]
 
+const usernames = ["laurence", "jesus", "dan", "alex", "steve", "cam", "rowena", "jia"]
+
 const selectRandomElement = function (array) {
     return array[
         Math.floor(Math.random() * array.length) // picks a random index
@@ -41,7 +44,7 @@ const selectRandomElement = function (array) {
 
 // if you want a variable number of rounds calculate the total number of tournaments.
 const getTournamentCount = (numRounds) => {
-    // get the sum of 2^0 + 2^1 up till round count
+    // get the sum of 2^0 + 2^1 + 2^2 ... up till round count
     let tournamentCount = 0;
 
     for (let i = 0; i < numRounds; i++) {
@@ -104,7 +107,7 @@ db.once("open", async () => {
 
     //CREATE NFTS
     try {
-        for (let i = 0; i < 65; i++) {
+        for (let i = 0; i < 64; i++) {
             await Nft.create({
                 background: selectRandomElement(background),
                 bodyType: selectRandomElement(bodyType),
@@ -127,31 +130,40 @@ db.once("open", async () => {
         throw new Error(error);
     }
 
-    // REGISTER LAURENCE'S ACCOUNT AND MINT NFT's:
+    // REGISTER ACCOUNTS AND MINT NFT's:
     try {
-
-        password = await bcrypt.hash('chicken', 12); //Encrypt password before saving it
-
-        const laurence = await User.create({
-            username: 'laurence',
-            email: 'laurence@ga.com',
-            password: password,
-            amountInWallet: 5,
-            createdAt: new Date()
-        })
-        console.log("Created the user: 'laurence', password: 'chicken'");
-
-        // MINTING NFTS
-
-        for (let i = 0; i < 32; i++) {
-            await mintNft(laurence.id);
+        const userIds = [];
+        // usernames.forEach( async (username) => {
+        for( let i = 0; i < usernames.length; i++){
+            const username = usernames[i]
+            password = await bcrypt.hash('chicken', 12); //Encrypt password before saving it
+    
+            const user = await User.create({
+                username,
+                email: `${username}@ga.com`,
+                password: password,
+                amountInWallet: 5,
+                createdAt: new Date()
+            })
+            console.log(`Created the user: '${username}', password: 'chicken'`);
+    
+            userIds.push(user.id);
         }
+        
+        // MINTING NFTS
+        for(let i = 0; i< 4; i++){
+            for (let j = 0; j < 8; j++) {
+                await mintNft(userIds[j]);
+            }
+        }
+        
+        // console.log(
+        //     `Minted ${await Nft.count({
+        //         user: `${userIds[0]}`,
+        //     })} Nfts that belong to user: 'laurence'. His ID is: ${userIds[0]}`
+        // );
 
-        console.log(
-            `Minted ${await Nft.count({
-                user: `${laurence.id}`,
-            })} Nfts that belong to user: 'laurence'. His ID is: ${laurence.id}`
-        );
+
 
     } catch (err) {
         console.log(err)
