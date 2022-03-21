@@ -21,10 +21,17 @@ const mouth = ["Smiling"];
 const headgear = ["Hat", "Sombrero"];
 const gloves = ["Red", "Yellow", "Green", "Brown"];
 const bruisingOrBlood = ["Black eye", "Bloody Lip"];
-const image = ["https://res.cloudinary.com/metaverse-fc/image/upload/v1647771047/banner-fighter2_wt8tpy.png",
-"https://res.cloudinary.com/metaverse-fc/image/upload/v1647771047/banner-fighter1_trmi2m.png",
-"https://res.cloudinary.com/metaverse-fc/image/upload/v1647771046/banner1_wbjhyi.png",
-"https://res.cloudinary.com/metaverse-fc/image/upload/v1647771046/banner2_rruhkv.png];"]
+const image = ["https://res.cloudinary.com/metaverse-fc/image/upload/v1647822167/NFTs/ROUND1-06_nsa2v7.png",
+"https://res.cloudinary.com/metaverse-fc/image/upload/v1647822156/NFTs/ROUND1-05_rwixpk.png",
+"https://res.cloudinary.com/metaverse-fc/image/upload/v1647822147/NFTs/ROUND1-04_m4m8w4.png",
+"https://res.cloudinary.com/metaverse-fc/image/upload/v1647822139/NFTs/ROUND1-03_mjzu8o.png",
+"https://res.cloudinary.com/metaverse-fc/image/upload/v1647822132/NFTs/ROUND1-02_c7xcv7.png",
+"https://res.cloudinary.com/metaverse-fc/image/upload/v1647822126/NFTs/ROUND1-01_v2exa1.png",
+"https://res.cloudinary.com/metaverse-fc/image/upload/v1647771047/NFTs/card5_jwjkf5.jpg",
+"https://res.cloudinary.com/metaverse-fc/image/upload/v1647771047/NFTs/card3_hccrrl.jpg",
+"https://res.cloudinary.com/metaverse-fc/image/upload/v1647771047/NFTs/card4_nyl76z.jpg",
+"https://res.cloudinary.com/metaverse-fc/image/upload/v1647771046/NFTs/card2_xmnadb.jpg",
+"https://res.cloudinary.com/metaverse-fc/image/upload/v1647771046/NFTs/card1_nvag4n.jpg"]
 
 const selectRandomElement = function (array) {
     return array[
