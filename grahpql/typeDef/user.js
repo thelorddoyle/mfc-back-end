@@ -20,11 +20,8 @@ module.exports = gql`
 
     input UserInput { #User model type
     
-        id: ID!, 
         email: String
-        token: String
         username: String
-        createdAt: Date
         
     },
 
@@ -41,7 +38,9 @@ module.exports = gql`
 		
         getUser(userID: ID!): User,
         getAllUsers: [User],
-        getUserNfts: [Nft],
+        getUserNfts(userID: ID!): [Nft],
+        getMyNfts: [Nft],
+        getAllMyTournaments: [Tournament]
 		
 	}
 
@@ -49,7 +48,7 @@ module.exports = gql`
 
 		register(registerInput: RegisterInput): User!,
 		login(username: String!, password: String!): User!,
-		addAmount(amount: Float!): User!,
+		addAmount(userId: ID!, amount: Float!): User!,
 		removeAmount(amount: Float!): User!,
 		updateUser(user: UserInput): User!,
 		deleteUser(userId: ID!): Result!

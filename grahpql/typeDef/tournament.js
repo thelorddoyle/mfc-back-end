@@ -8,7 +8,7 @@ module.exports = gql `
         startDate: Date,
         status: String,
         fights: [Fight],
-        round: Int!
+        round: Int! 
     }   
 
     input CreateTournament{

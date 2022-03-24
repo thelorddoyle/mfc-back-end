@@ -17,7 +17,10 @@ module.exports = {
 
         async getFight(_, { fightId }) {
             try {
-                const result = await Fight.findById(fightId);
+                const result = await Fight.findById(fightId).populate({
+                    path: 'nfts',
+                    populate: {path: 'user'}
+                });
                 if (result) {
                     return result;
                 } else {
