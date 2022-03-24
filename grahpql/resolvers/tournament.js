@@ -45,6 +45,7 @@ const getCurrentTournament = async function () { //TODO: possibly remove the try
     }
 };
 
+// inputing 0-15 gives 1, 16-23 gives 2, 24-27 gives 3....
 const getTier = (fightIndex) => {
     if (fightIndex < 16){
         return 1;
@@ -73,9 +74,9 @@ const createTournament = async function (tournamentDetails) {
             const generateFight = await createFight({
                 fightReplay: [],
                 nfts: [],
+                tournament: tournament.id,
                 fightIndex,
                 tier,
-                tournament: tournament.id
             });
 
             fightsArray.push(generateFight._id);
@@ -94,6 +95,7 @@ module.exports = {
     createTournament,
     getCurrentTournament,
     getWinnerAndLoser,
+    getTier,
     Query: {
         async getTournaments() {
             try {

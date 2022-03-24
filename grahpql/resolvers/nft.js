@@ -10,45 +10,55 @@ const checkAuth = require("../../middleware/checkAuth");
 const { validateRemoveAmount } = require("../../helpers/validators");
 const tournament = require("./tournament");
 
-const insertFirstFight = async (tournament, nftId) => {
-    const round = tournament.round;
-    const fights = tournament.fights;
+// if tournament tier 1 fights completely filled, then change status to ready
+const isFinalFightFilled = (fights) => {
+    return fights[15].nfts.length === 2
+}
 
-    // if tournament tier 1 fights completely filled, then change status to ready
-    const checkFinalFight = async () => {
-        if (fights[15].nfts.length === 2) {
-            tournament.status = "ready";
-            await tournament.save();
-        }
-    }
-
-    // generates a callback function that decides if nft can take fight slot. 
-    let isEmptySlot;
+// returns a function that is modified for the round input. 
+const findIfEmptySlotAvailible = (round) => {
     if (round === 1){ // any slot can be taken in round 1
-        isEmptySlot = (slotsOccupied) => {
+        console.log(round)
+        return (slotsOccupied) => {
             return slotsOccupied < 2
         }
     } else { // only slot in index 1 slot can be taken in round 1
-        isEmptySlot = (slotsOccupied) => {
+        return (slotsOccupied) => {
             return slotsOccupied === 1; 
         }
     }
+}
+
+const insertFirstFight = async (tournament, nftId) => {
+    const round = tournament.round;
+    const fights = tournament.fights;
+    
+    // generates a callback function that decides if nft can take fight slot. 
+    let isEmptySlot = findIfEmptySlotAvailible(round);
 
     // Loop over all fights and if empty slot found, then add nft and break
+
+    // find first empty slot.
+    
     for (let i = 0; i < fights.length; i++) {
         const slotsOccupied = fights[i].nfts.length;
         
-        if (isEmptySlot(slotsOccupied)) {
+        if (isEmptySlot(slotsOccupied)) { // checks if there is an empty slot depending on round. 
             addFightToNft(fights[i].id, nftId);
             fights[i].nfts.push(nftId);
             await fights[i].save();
 
-            await checkFinalFight();
+            if (isFinalFightFilled(fights)){
+                tournament.status = "ready";
+                await tournament.save();
+            }
 
             break;
         }
     }
 };
+
+
 
 const putNftIntoAvailibleFights = async function (nftId) {
     try {
@@ -126,6 +136,8 @@ const mintNft = async (userId) => {
 
 module.exports = {
     mintNft,
+    isFinalFightFilled,
+    findIfEmptySlotAvailible,
     Query: {
         async getNfts() {
             try {
