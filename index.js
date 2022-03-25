@@ -12,10 +12,11 @@ const server = new ApolloServer({
     context: ({ req }) => ({ req }),
 });
 
+const PORT = process.env.PORT || 4000
 //Once connection is establish we run server
 db.once("open", async () => {
     await server
-        .listen({ port: 4000 })
+        .listen({ port: PORT })
         .then((res) => console.log(`Server ${res.url}`))
         .catch((error) => console.log(error));
 });

@@ -111,6 +111,7 @@ module.exports = {
         },
 
         async getUserNfts(_, {userID}) {
+
             try {
                 const nfts = await Nft.find({ user: userID }).populate({
                     path: 'fights',

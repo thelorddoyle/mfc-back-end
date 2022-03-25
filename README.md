@@ -1,36 +1,68 @@
-Technical document describing the overall structure of the NFT => FIGHTS => TOURNAMENT = (Possible ROUND);
+<p align="center"><img src="https://res.cloudinary.com/metaverse-fc/image/upload/v1647822121/Logos%20And%20Icons/MFC_White_diwtbf.png" alt="mfc_logo" style="width:200px"/></p>
+<p align="center">
+<img src="https://img.shields.io/badge/version-1.0-success" />
+<img src="https://img.shields.io/github/issues/thelorddoyle/mfc-back-end" />
+<img src="https://img.shields.io/github/languages/count/thelorddoyle/mfc-back-end"/>
+<img src="https://img.shields.io/github/languages/top/thelorddoyle/mfc-back-end"/>
+<img src="https://img.shields.io/github/commit-activity/m/thelorddoyle/mfc-back-end"/>
+</p>
 
-IMPORTANT DETAILS:
-BUILD ALL EMPTY TOURNAMENTS IN SEED 
-BUILD ALL EMPTY FIGHTS IN SEED
+<h1 align="center">Metaverse Fighting Championship - Back End</h1>
 
-Mint has two parts:
-In Round #1 (Genesis) all slots need to be filled by unique nfts (32)
-In Round #2-#3  50% of slots are filled by Nfts in previous rounds the remaining 50% are new mints
-Each mint needs to populate the respective slots for all following Rounds.
+<p align="center">
+  <a href="#about">About</a> •
+  <a href="#features">Features</a> •
+  <a href="#wiki">Wiki</a> •
+  <a href="#support">Support</a> •
+  <a href="#credits">Credits</a> •
+  <a href="#license">License</a>
+</p>
 
-Unique mints for each round: 
-    Round #1: 32 (genesis)
-    Round #2: 32
-    Round #3: 64
-    Round #4: 128...
+## About
+### Utility-driven, MMA-inspired NFT game.
+The Metaverse Fighting Championship (MFC) is a blockchain game that allows participation through ownership of NFTs.
 
+MFC will utilise the ownership of digital assets to participate in off-chain simulated MMA tournaments. Prize money will be rewarded to winners and runners up in the form of Ethereum airdrops on Polygon.
 
+This back-end application is built with:
+- JavaScript
+- GraphQL
+- XState
+- MongoDB / Mongoose
+- Express
+- Node.js
 
-1. ~~Use tourney to pass the minted nft to the first availible fight slot.~~
-2. ~~Add "round" field to the Tournament~~
-3. ~~Make some seeds mentioned~~
-3.1 Make some Nft Minting Seeds. 
-4. ~~Make sure you can reseed (destroy all)~~
-5. ~~Build function that places NFTs in to all of their future positions in rounds @ mint stage~~
-6. Resolve our first tournament
-    6.1. ~~complete the fight between nft 1 and nft 2 in an individual Fight~~
-    6.2. ~~generate a random winner of the fight~~
-    6.3. ~~pass nft1, nft2 and the winner of the fight to the fightGenerator~~
-    6.4. ~~have the fight generator return a fightReplay object that is inserted in to the fight~~
-    6.5. ~~update Fight with all of it's available fields (winnerId, loserId, fightReplay, fightIndex etc)~~
-    6.5.1 ~~add the tiers to the seeds~~
-    6.6. ~~after fight has been resolved, move the winning NFT in to the next fight @ fightIndex 3~~
-    6.7. ~~loop until tournament has "completed".~~
-    6.8. ~~update tournament winner and loser fields~~
-7. Chain the Resolving of all tournament (DAN PLEASE CONFIRM IF THIS IS CORRECT BUSINESS LOGIC)
+To visit the app, please [click here.](https://metaverse-fc.netlify.app/)
+
+To learn more, see the below <a href="#wiki">Wiki</a> section.
+
+*Important note: This GitHub repo only represents the app's back-end. You can view the [front-end repository here.](https://github.com/thelorddoyle/mfc-front-end)*
+
+## Features
+
+- XState Game Engine
+- GraphQL API
+- Mongoose
+
+## Wiki
+
+MFC is an NFT-game that is driven by the problems in the current PFP-led NFT marketplace. 
+
+MFC looks to meet the demand for utility NFTs with play-to-earn features. 
+
+By utilising gamification & prize money, this project represents a long-term and sustainable project with ongoing benefits for holders. Not through complex, hard-to-grasp tokenomics - instead with simple, obvious & automated participation and rewards. 
+
+For all of the information on the game, how the tournaments work & how to get involved see our [Wiki here](https://metaverse-fighting-championship.gitbook.io/mfc/).
+## Support
+
+MFC is an open-source project and we welcome & encourage community contributions. 
+## Credits
+
+The three primary contributors are [thelorddoyle](https://github.com/thelorddoyle/), [Jesus-fhz](https://github.com/Jesus-fhz) and [impetusdev](https://github.com/impetusdev).
+
+The total gallery of contributors can be seen below:
+
+<img src="https://contrib.rocks/image?repo=thelorddoyle/mfc-front-end" style="width:150px"/>
+
+## Licence
+We do not support the usage of our code for any other games or projects at this time. If you would like to discuss this, please contact us at [this email](emailhere).
