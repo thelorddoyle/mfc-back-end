@@ -61,17 +61,18 @@ const putNftIntoAvailibleFights = async function (nftId) {
     try {
         const tournament = await getCurrentTournament();
         await tournament.populate("fights");
+        let round = tournament.round + 1;
+        const remainingRounds = 3 - tournament.round; //TODO: change the '3' here to however many rounds are intended. 
 
-        let roundNumberTracker = tournament.round + 1;
         await insertIntoFirstFight(tournament, nftId);
 
-        const remainingRounds = 3 - tournament.round;
-        for (i = 0; i < remainingRounds; i++) {
-            let allTournamentsInRound = await Tournament.find({ round: roundNumberTracker }).populate("fights");
+        // for every elligible round insert nft into first availible slot
+        for (i = round; i < remainingRounds; i++) {
+            let roundTournaments = await Tournament.find({ round }).populate("fights");
 
             // the break below will bubble up to here.
-            breakingLoops: for (let j = 0; j < allTournamentsInRound.length; j++) {
-                const fights = allTournamentsInRound[j].fights;
+            breakingLoops: for (let j = 0; j < roundTournaments.length; j++) {
+                const fights = roundTournaments[j].fights;
 
                 // loop over all fights and find the first one with an empty slot
                 for (let k = 0; k < fights.length; k++) {
@@ -85,11 +86,6 @@ const putNftIntoAvailibleFights = async function (nftId) {
                         break breakingLoops;
                     }
                 }
-            }
-
-            //TODO: figure out why this needs a conditional?
-            if (roundNumberTracker < 10) {
-                roundNumberTracker++;
             }
         }
 
