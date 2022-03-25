@@ -56,6 +56,10 @@ const insertIntoFirstFight = async (tournament, nftId) => {
     }
 };
 
+const findEmptyFight = (roundTournaments) => {
+    return {nfts: []}
+}
+
 //TODO: refactor this method
 const putNftIntoAvailibleFights = async function (nftId) {
     try {
@@ -71,6 +75,11 @@ const putNftIntoAvailibleFights = async function (nftId) {
             let roundTournaments = await Tournament.find({ round }).populate("fights");
 
             // the break below will bubble up to here.
+
+            // for each fight of each tournament find the first slot that has no opponent yet
+            // then assign the nft. 
+
+            
             breakingLoops: for (let j = 0; j < roundTournaments.length; j++) {
                 const fights = roundTournaments[j].fights;
 
@@ -122,6 +131,8 @@ module.exports = {
     mintNft,
     isFinalFightFilled,
     findIfEmptySlotAvailible,
+    findEmptyFight,
+    putNftIntoAvailibleFights,
     Query: {
         async getNfts() {
             try {
