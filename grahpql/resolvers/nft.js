@@ -56,9 +56,10 @@ const insertIntoFirstFight = async (tournament, nftId) => {
     }
 };
 
+//TODO: refactor this method
 const putNftIntoAvailibleFights = async function (nftId) {
     try {
-        const tournament = await getCurrentTournament(); // get the first "status: pending" tournament
+        const tournament = await getCurrentTournament();
         await tournament.populate("fights");
 
         let roundNumberTracker = tournament.round + 1;
@@ -66,9 +67,7 @@ const putNftIntoAvailibleFights = async function (nftId) {
 
         const remainingRounds = 3 - tournament.round;
         for (i = 0; i < remainingRounds; i++) {
-            let allTournamentsInRound = await Tournament.find({
-                round: roundNumberTracker,
-            }).populate("fights");
+            let allTournamentsInRound = await Tournament.find({ round: roundNumberTracker }).populate("fights");
 
             // the break below will bubble up to here.
             breakingLoops: for (let j = 0; j < allTournamentsInRound.length; j++) {
@@ -101,15 +100,13 @@ const putNftIntoAvailibleFights = async function (nftId) {
     }
 };
 
-
-
 const mintNft = async (userId) => {
     try {
         const nftCost = 0.1;
-
-        removeAmount(userId, nftCost);//TODO: remove the funds from account 
-
+        removeAmount(userId, nftCost);
+        
         const nft = await Nft.findOne({ user: { $exists: false } });
+
         if (nft) {
             nft.user = userId; // this saves a reference to the User with the 'userId'
             await nft.save();
