@@ -131,7 +131,7 @@ db.once("open", async () => {
         // usernames.forEach( async (username) => {
         for( let i = 0; i < usernames.length; i++){
             const username = usernames[i]
-            password = await bcrypt.hash('chicken', 12); //Encrypt password before saving it
+            password = await bcrypt.hash('password', 12); //Encrypt password before saving it
     
             const user = await User.create({
                 username,
@@ -160,7 +160,7 @@ db.once("open", async () => {
     try {
         const login = generateToken({
             username: "test",
-            password: "chicken",
+            password: "password",
         });
 
         console.log("Logged in to 'test'");
