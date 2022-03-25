@@ -34,7 +34,7 @@ const createFight = async function (fightDetails) {
 // get first tournament with a status: 'pending'
 const getCurrentTournament = async function () { //TODO: possibly remove the try catch
     try {
-        const result = await Tournament.findOne({ status: " " });
+        const result = await Tournament.findOne({ status: "pending" });
         if (result) {
             return result;
         } else {
