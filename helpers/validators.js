@@ -1,5 +1,6 @@
 // each of the 'validate' methods must return a errors and a boolean value of true or false
-const User = require('../models/User')
+const User = require('../models/User');
+const bcrypt = require("bcryptjs");
 
 // performs the regex check to see if email meets regex requirements
 const emailIsNotValid = (email) => {
@@ -34,12 +35,28 @@ const validateUserUpdate = async (email, username, currentUser) => {
     if(userWithEmail && (currentEmail !== email)){ // makes sure email not in use, if it must not be someone else's email
         errors.email = 'Email is already taken';
     }
-
     return {
         errors,
         valid: Object.keys(errors).length < 1,
     };
 };
+
+const validateUpdatePassowrd = async (userPassword, currentPassword, password, confirmPassword) => {
+    const errors = {};
+    const checkCurrentPassword = await bcrypt.compare(currentPassword, userPassword);
+    if(!checkCurrentPassword){
+        errors.wrongPassword = "Current passwrod do not match";
+    }
+    if (password === "") { 
+        errors.password = "Password must not be empty";
+    } else if (password !== confirmPassword) {
+        errors.confirmPassword = "Password confirmation must match new password";
+    }
+    return {
+        errors,
+        valid: Object.keys(errors).length < 1,
+    };
+}
 
 const validateUser = async (username, email, password, confirmPassword) => {
     const errors = {};
@@ -117,5 +134,6 @@ module.exports = {
     validateLogin,
     validateUserUpdate,
     validateRemoveAmount,
-    validateAmountPositive
-};
+    validateAmountPositive,
+    validateUpdatePassowrd
+}
