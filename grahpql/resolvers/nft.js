@@ -18,7 +18,6 @@ const isFinalFightFilled = (fights) => {
 // returns a function that is modified for the round input. 
 const findIfEmptySlotAvailible = (round) => {
     if (round === 1){ // any slot can be taken in round 1
-        console.log(round)
         return (slotsOccupied) => {
             return slotsOccupied < 2
         }
@@ -29,36 +28,33 @@ const findIfEmptySlotAvailible = (round) => {
     }
 }
 
-const insertFirstFight = async (tournament, nftId) => {
-    const round = tournament.round;
-    const fights = tournament.fights;
+const addFightToNft = async (fightId, nftId) => {
+    const nft = await Nft.findById(nftId).populate('fights');
     
+    nft.fights.push(fightId);
+    await nft.save();
+}
+
+const insertIntoFirstFight = async (tournament, nftId) => {
     // generates a callback function that decides if nft can take fight slot. 
-    let isEmptySlot = findIfEmptySlotAvailible(round);
+    const isEmptySlot = findIfEmptySlotAvailible(tournament.round);
 
-    // Loop over all fights and if empty slot found, then add nft and break
-
-    // find first empty slot.
+    //find first fight with open slot
+    const fightWithSlot = tournament.fights.find(fight => isEmptySlot(fight.nfts.length));
     
-    for (let i = 0; i < fights.length; i++) {
-        const slotsOccupied = fights[i].nfts.length;
-        
-        if (isEmptySlot(slotsOccupied)) { // checks if there is an empty slot depending on round. 
-            addFightToNft(fights[i].id, nftId);
-            fights[i].nfts.push(nftId);
-            await fights[i].save();
-
-            if (isFinalFightFilled(fights)){
-                tournament.status = "ready";
-                await tournament.save();
-            }
-
-            break;
+    // if fight exists add nftId to fight and fight to nft
+    if (fightWithSlot){
+        addFightToNft(fightWithSlot.id, nftId);
+        fightWithSlot.nfts.push(nftId);
+        fightWithSlot.save();
+    
+        // update tournament status if ready
+        if (isFinalFightFilled(tournament.fights)){
+            tournament.status = "ready";
+            await tournament.save();
         }
     }
 };
-
-
 
 const putNftIntoAvailibleFights = async function (nftId) {
     try {
@@ -66,7 +62,7 @@ const putNftIntoAvailibleFights = async function (nftId) {
         await tournament.populate("fights");
 
         let roundNumberTracker = tournament.round + 1;
-        await insertFirstFight(tournament, nftId);
+        await insertIntoFirstFight(tournament, nftId);
 
         const remainingRounds = 3 - tournament.round;
         for (i = 0; i < remainingRounds; i++) {
@@ -105,12 +101,7 @@ const putNftIntoAvailibleFights = async function (nftId) {
     }
 };
 
-const addFightToNft = async (fightId, nftId) => {
-    const nft = await Nft.findById(nftId).populate('fights');
-    
-    nft.fights.push(fightId);
-    await nft.save();
-}
+
 
 const mintNft = async (userId) => {
     try {
