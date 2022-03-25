@@ -6,7 +6,9 @@ const {
     validateUser,
     validateLogin,
     validateUserUpdate,
-    validateRemoveAmount
+    validateRemoveAmount,
+    validateUpdatePassowrd
+
 } = require("../../helpers/validators");
 const checkAuth = require("../../middleware/checkAuth");
 const Nft = require("../../models/Nft");
@@ -234,20 +236,39 @@ module.exports = {
                 username,
                 currentUser
             );
+            
             if (!valid) throw new UserInputError("Errors", { errors });
             
             Object.assign(currentUser, user); //changes only the
             currentUser.save();
-
             return currentUser;
+        },
+
+        async updatePassword(_,{ user }, context){
+                const { id } = checkAuth(context);
+                //Find user
+                const currentUser =  await User.findById(id);
+                //Destructing parameters
+                const { currentPassowrd, password, confirmPassword } = user;
+
+                //Validate password and current match, plus input fields
+                const {errors, valid }=  await  validateUpdatePassowrd(currentUser.password, currentPassowrd, password, confirmPassword)
+                if (!valid) throw new UserInputError("Errors", { errors }); 
+                //Hashing new password
+                const newPassword =  await bcrypt.hash(password, 12);
+
+                //Updating user password
+                currentUser.password = newPassword;
+                await currentUser.save()
+
+                return currentUser;
+
         },
 
         async deleteUser(_, { userId }) {
             //TODO: add validation checking if admin account. & the ability to delete own account.
             try {
                 const user = await User.findById(userId);
-                console.log(user);
-
                 if (user) {
                     const result = await User.deleteOne({ _id: userId });
                     return result;
@@ -289,7 +310,7 @@ module.exports = {
                     throw new UserInputError("User does not exist.");
                 }
             } catch (err) {
-                throw new Error(err);
+                throw new UserInputError(err)
             }
         },
     },
