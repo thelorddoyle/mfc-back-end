@@ -104,7 +104,6 @@ module.exports = {
         async getMyNfts(_, __, context) {
             try {
                 const { id } = checkAuth(context);
-                console.log('')
                 const nfts = await Nft.find({ user: id }).populate('fights');
                 return nfts;
             } catch (error) {
@@ -238,7 +237,6 @@ module.exports = {
             );
             
             if (!valid) throw new UserInputError("Errors", { errors });
-            
             Object.assign(currentUser, user); //changes only the
             currentUser.save();
             return currentUser;
