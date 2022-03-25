@@ -29,7 +29,7 @@ const image = ["https://res.cloudinary.com/metaverse-fc/image/upload/v1647771047
 "https://res.cloudinary.com/metaverse-fc/image/upload/v1647771046/NFTs/card2_xmnadb.jpg",
 "https://res.cloudinary.com/metaverse-fc/image/upload/v1647771046/NFTs/card1_nvag4n.jpg"]
 
-const usernames = ["laurence", "jesus", "dan", "alex", "steve", "cam", "rowena", "jia"]
+const usernames = ["test", "jesus", "dan", "alex", "steve", "cam", "rowena", "jia"]
 
 const selectRandomElement = function (array) {
     return array[
@@ -156,14 +156,14 @@ db.once("open", async () => {
         console.log(err)
     }
 
-    //LOGIN TO LAURENCE ACCOUNT:
+    //LOGIN TO TEST ACCOUNT:
     try {
         const login = generateToken({
-            username: "laurence",
+            username: "test",
             password: "chicken",
         });
 
-        console.log("Logged in to 'laurence'");
+        console.log("Logged in to 'test'");
         console.log("login token:", login, "(MAY NOT BE A VALID TOKEN)");
     } catch (err) {
         console.log(err);
