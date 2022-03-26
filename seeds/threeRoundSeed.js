@@ -140,7 +140,7 @@ db.once("open", async () => {
                 amountInWallet: 5,
                 createdAt: new Date()
             })
-            console.log(`Created the user: '${username}', password: 'chicken'`);
+            console.log(`Created the user: '${username}', password: 'password'`);
     
             userIds.push(user.id);
         }
