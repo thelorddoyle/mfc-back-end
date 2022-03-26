@@ -18,31 +18,36 @@ const validateUserUpdate = async (email = null, username = null , currentUser) =
     // foreach of the values you want to send through check if they are different only send through the actual differences. 
     const {email: currentEmail , username: currentUsername } = currentUser; 
     const errors = {};
-    if((email === null || email.trime() === "") &&  (username === null || username.trim() === "" )){
+    const values = {};
+    
+    if((email === null || email.trim() === "") &&  (username === null || username.trim() === "" )){
         errors.email = "Email must not be empty";
         errors.username = "Username must not be empty";
     }
-    if(email !== null ){
+
+    if(email !== null && email.trim() !== ""){
+        const userWithEmail = await User.findOne({email});
         if (emailIsNotValid(email)) {
             errors.email = "Must be a valid email";
-        }
-        const userWithEmail = await User.findOne({email});
-
-        if(userWithEmail && (currentEmail !== email)){ // makes sure email not in use, if it must not be someone else's email
+        }else if(userWithEmail && (currentEmail !== email)){ // makes sure email not in use, if it must not be someone else's email
             errors.email = 'Email is already taken';
+        }else{
+            values.email = email
         }
+        
     }
-    if(username !== null){
-        if (username.trim() === "") {
-            errors.username = "Username must not be empty";
-        } else if (await usernameIsInUse(username) && (currentUsername !== username)){ // makes sure username not in use, if it must not be someone else's username
+    if(username !== null && username.trim() !== ""){
+         if (await usernameIsInUse(username) && (currentUsername !== username)){ // makes sure username not in use, if it must not be someone else's username
             errors.username = 'Username is already taken';
-        }
+         }else{
+            values.username = username
+         }
     }
     
     return {
         errors,
         valid: Object.keys(errors).length < 1,
+        values
     };
 };
 

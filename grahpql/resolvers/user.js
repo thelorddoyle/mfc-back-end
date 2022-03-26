@@ -227,21 +227,32 @@ module.exports = {
 
         // validates a change in email, username
         async updateUser(_, { user }, context) {
+            console.log(user);
             const { id } = checkAuth(context);
             const currentUser = await User.findOne({ id });
             const { email, username } = user; //NOTE: id is userId and email and username are the new values(to update to).
-            const { errors, valid } = await validateUserUpdate(
+            const { errors, valid, values } = await validateUserUpdate(
                 email,
                 username,
                 currentUser
             );
-            
             if (!valid) throw new UserInputError("Errors", { errors });
-            Object.assign(currentUser, user); //changes only the
-            currentUser.save();
-            return currentUser;
+
+            //We only save the value that was sent or both
+            Object.assign(currentUser, values);
+            result = await currentUser.save();
+
+            //We generate a new session for the user
+            const token = generateToken(currentUser);
+            return {
+                ...result._doc,
+                id: result.id,
+                token,
+            }
         },
 
+
+        
         async updatePassword(_,{ user }, context){
                 const { id } = checkAuth(context);
                 //Find user
