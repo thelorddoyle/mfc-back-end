@@ -22,19 +22,14 @@ const mouth = ["Smiling"];
 const headgear = ["Hat", "Sombrero"];
 const gloves = ["Red", "Yellow", "Green", "Brown"];
 const bruisingOrBlood = ["Black eye", "Bloody Lip"];
-const image = ["https://res.cloudinary.com/metaverse-fc/image/upload/v1647822167/NFTs/ROUND1-06_nsa2v7.png",
-"https://res.cloudinary.com/metaverse-fc/image/upload/v1647822156/NFTs/ROUND1-05_rwixpk.png",
-"https://res.cloudinary.com/metaverse-fc/image/upload/v1647822147/NFTs/ROUND1-04_m4m8w4.png",
-"https://res.cloudinary.com/metaverse-fc/image/upload/v1647822139/NFTs/ROUND1-03_mjzu8o.png",
-"https://res.cloudinary.com/metaverse-fc/image/upload/v1647822132/NFTs/ROUND1-02_c7xcv7.png",
-"https://res.cloudinary.com/metaverse-fc/image/upload/v1647822126/NFTs/ROUND1-01_v2exa1.png",
+const image = ["https://res.cloudinary.com/metaverse-fc/image/upload/v1647771047/NFTs/card6_dtzc1b.jpg", 
 "https://res.cloudinary.com/metaverse-fc/image/upload/v1647771047/NFTs/card5_jwjkf5.jpg",
 "https://res.cloudinary.com/metaverse-fc/image/upload/v1647771047/NFTs/card3_hccrrl.jpg",
 "https://res.cloudinary.com/metaverse-fc/image/upload/v1647771047/NFTs/card4_nyl76z.jpg",
 "https://res.cloudinary.com/metaverse-fc/image/upload/v1647771046/NFTs/card2_xmnadb.jpg",
 "https://res.cloudinary.com/metaverse-fc/image/upload/v1647771046/NFTs/card1_nvag4n.jpg"]
 
-const usernames = ["laurence", "jesus", "dan", "alex", "steve", "cam", "rowena", "jia"]
+const usernames = ["test", "jesus", "dan", "alex", "steve", "cam", "rowena", "jia"]
 
 const selectRandomElement = function (array) {
     return array[
@@ -136,7 +131,7 @@ db.once("open", async () => {
         // usernames.forEach( async (username) => {
         for( let i = 0; i < usernames.length; i++){
             const username = usernames[i]
-            password = await bcrypt.hash('chicken', 12); //Encrypt password before saving it
+            password = await bcrypt.hash('password', 12); //Encrypt password before saving it
     
             const user = await User.create({
                 username,
@@ -161,14 +156,14 @@ db.once("open", async () => {
         console.log(err)
     }
 
-    //LOGIN TO LAURENCE ACCOUNT:
+    //LOGIN TO TEST ACCOUNT:
     try {
         const login = generateToken({
-            username: "laurence",
-            password: "chicken",
+            username: "test",
+            password: "password",
         });
 
-        console.log("Logged in to 'laurence'");
+        console.log("Logged in to 'test'");
         console.log("login token:", login, "(MAY NOT BE A VALID TOKEN)");
     } catch (err) {
         console.log(err);
