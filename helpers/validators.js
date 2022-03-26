@@ -18,7 +18,7 @@ const validateUserUpdate = async (email = null, username = null , currentUser) =
     // foreach of the values you want to send through check if they are different only send through the actual differences. 
     const {email: currentEmail , username: currentUsername } = currentUser; 
     const errors = {};
-    if(email === null & username === null){
+    if((email === null || email.trime() === "") &&  (username === null || username.trim() === "" )){
         errors.email = "Email must not be empty";
         errors.username = "Username must not be empty";
     }
