@@ -162,17 +162,17 @@ db.once("open", async () => {
     }
 
     //LOGIN TO LAURENCE ACCOUNT:
-    try {
-        const login = generateToken({
-            username: "laurence",
-            password: "chicken",
-        });
+    // try {
+    //     const login = generateToken({
+    //         username: "laurence",
+    //         password: "chicken",
+    //     });
 
-        console.log("Logged in to 'laurence'");
-        console.log("login token:", login, "(MAY NOT BE A VALID TOKEN)");
-    } catch (err) {
-        console.log(err);
-    }
+    //     console.log("Logged in to 'laurence'");
+    //     console.log("login token:", login, "(MAY NOT BE A VALID TOKEN)");
+    // } catch (err) {
+    //     console.log(err);
+    // }
 
     process.exit(0); // exits the node mode after seeding.
 });

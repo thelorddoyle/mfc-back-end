@@ -57,8 +57,52 @@ const insertIntoFirstFight = async (tournament, nftId) => {
 };
 
 const findEmptyFight = (roundTournaments) => {
-    return {nfts: []}
+    
+    let emptyFight;
+    let i = 0; 
+
+    while(!emptyFight ){
+    
+        const fights = roundTournaments[i].fights;
+        
+        emptyFight = fights.find(fight => {
+            return fight.fightIndex < 16 && fight.nfts.length === 0;
+        })
+
+        i++;
+    }
+
+    return emptyFight;
+
 }
+
+// const putNftIntoAvailibleFights = async function (nftId) {
+//     try {
+//         // insert nft into first elligible round
+//         const tournament = await getCurrentTournament();
+//         await tournament.populate("fights");
+//         await insertIntoFirstFight(tournament, nftId);
+        
+        
+//         // insert nft into every round after. 
+//         const remainingRounds = 3; //TODO: change the '3' here to however many rounds are intended. 
+//         let round = tournament.round + 1;
+//         for (round; round <=  remainingRounds; round) {
+//             let tournamentsInRound = await Tournament.find({ round }).populate("fights");
+
+//             const fight = findEmptyFight(tournamentsInRound);
+//             fight.nfts.push(nftId);
+//             fight.save();
+
+//             addFightToNft(fight.id, nftId);
+//         }
+
+//         // const tournaments = await getCurrentTournament();
+//         // await tournaments.populate("fights");
+//     } catch (error) {
+//         throw new UserInputError(error);
+//     }
+// };
 
 //TODO: refactor this method
 const putNftIntoAvailibleFights = async function (nftId) {
@@ -98,8 +142,8 @@ const putNftIntoAvailibleFights = async function (nftId) {
             }
         }
 
-        const tournaments = await getCurrentTournament();
-        await tournaments.populate("fights");
+        // const tournaments = await getCurrentTournament();
+        // await tournaments.populate("fights");
     } catch (error) {
         throw new UserInputError(error);
     }
