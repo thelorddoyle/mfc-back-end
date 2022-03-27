@@ -28,39 +28,36 @@ const findIfEmptySlotAvailible = (round) => {
     }
 }
 
-const addFightToNft = async (fightId, nftId) => {
+const addFightToNft = async (fight, nft) => {
     try {
-        const nft = await Nft.findById(nftId).populate('fights');
     
-        nft.fights.push(fightId);
+        nft.fights.push(fight.id);
         await nft.save();
     } catch (error) {
         console.log(error);
     }
 }
 
-const addNftToFight = async (nftId, fightId) => {
+const addNftToFight = async (nft, fight) => {
     try {
-        const fight = await Fight.findById(fightId).populate('nfts');
-
-        fight.nfts.push(nftId);
+        fight.nfts.push(nft.id);
         await fight.save();
     } catch (error) {
         console.log(error);
     }
 }
 
-const insertIntoFirstFight = async (tournament, nftId) => {
+const insertIntoFirstFight = async (tournament, nft) => {
     // generates a callback function that decides if nft can take fight slot. 
     const isEmptySlot = findIfEmptySlotAvailible(tournament.round);
 
     //find first fight with open slot
     const fightWithSlot = tournament.fights.find(fight => isEmptySlot(fight.nfts.length));
     
-    // if fight exists add nftId to fight and fight to nft
+    // if fight exists add nft to fight and fight to nft
     if (fightWithSlot){
-        addFightToNft(fightWithSlot.id, nftId);
-        fightWithSlot.nfts.push(nftId);
+        addFightToNft(fightWithSlot, nft);
+        fightWithSlot.nfts.push(nft);
         fightWithSlot.save();
     
         // update tournament status if ready
@@ -88,22 +85,22 @@ const findEmptyFight = (roundTournaments) => {
 
 }
 
-const putNftIntoAvailibleFights = async function (nftId) {
+const putNftIntoAvailibleFights = async function (nft) {
     try {
         const tournament = await getCurrentTournament();
         await tournament.populate("fights");
         let round = tournament.round + 1;
         const totalNumRounds = 3; //TODO: change the '3' here to however many rounds are intended. 
 
-        await insertIntoFirstFight(tournament, nftId);
+        await insertIntoFirstFight(tournament, nft);
 
         // for every elligible round insert nft into first availible slot
         for (round; round <= totalNumRounds; round++) {
             let roundTournaments = await Tournament.find({ round }).populate("fights");
             const fight = findEmptyFight(roundTournaments);
 
-            await addNftToFight(nftId, fight.id);
-            await addFightToNft(fight.id, nftId);
+            await addFightToNft(fight, nft);
+            await addNftToFight(nft, fight);
         }
     } catch (error) {
         throw new UserInputError(error);
@@ -121,7 +118,7 @@ const mintNft = async (userId) => {
             nft.user = userId;
             await nft.save();
             await nft.populate("user"); // adds the user reference obj
-            await putNftIntoAvailibleFights(nft.id);
+            await putNftIntoAvailibleFights(nft);
             
             return nft;
         } else {
@@ -138,6 +135,8 @@ module.exports = {
     findIfEmptySlotAvailible,
     findEmptyFight,
     putNftIntoAvailibleFights,
+    addFightToNft,
+    addNftToFight,
     Query: {
         async getNfts() {
             try {

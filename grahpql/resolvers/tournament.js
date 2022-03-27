@@ -168,28 +168,28 @@ module.exports = {
             }
         },
 
+
         async resolveTournament(_, { tournamentId }) {
             try {
+                // find tournament
                 const tournament = await Tournament.findById(tournamentId).populate("fights");
 
                 if(tournament.status !== 'ready') {
                     throw new Error("Tournament is not ready.");
                 }
                 
+                // Loop over fights, determine winner, loser & populate the fightReplay field
                 for ( let i = 0; i < tournament.fights.length; i++ ) {
-                    // Determine winner, loser & populate the fightReplay field
                     const fight = await tournament.fights[i].populate("nfts");
 
                     [fight.winnerId, fight.loserId] = getWinnerAndLoser(fight.nfts[0].id, fight.nfts[1].id);
-
                     let fightReplay = getFightReplay(fight.nfts[0].id, fight.nfts[1].id, fight.winnerId);
                     fight.fightReplay.push(...fightReplay);
                     
                     await fight.save();
-                    
 
-                    // Insert fight into the first availible slot on next tier
                     
+                    // Insert fight into the first availible slot on next tier
                     if (i !== tournament.fights.length - 1) {
                         const nextTier = fight.tier + 1;
 
@@ -201,6 +201,7 @@ module.exports = {
                             );
                         });
                                 
+                        
                         nextFight.nfts.push(fight.winnerId);
                         await nextFight.save();
 
