@@ -15,6 +15,8 @@ const nftSchema = new Schema({
   gloves: String,
   bruisingOrBlood: String,
   image: String,
+  totalFights: Number, //this is for rankings page
+  totalWins: Number, //this is for rankings page
   user:{
     type: Schema.Types.ObjectId,
     ref: 'User'
