@@ -145,18 +145,21 @@ db.once("open", async () => {
                 amountInWallet: 5,
                 createdAt: new Date()
             })
-            console.log(`Created the user: '${username}', password: 'chicken'`);
+            // console.log(`Created the user: '${username}', password: 'chicken'`);
     
             userIds.push(user.id);
         }
         
         // MINTING NFTS
+        let count = 0;
         for(let i = 0; i< 4; i++){
             for (let j = 0; j < 8; j++) {
+                count++
                 await mintNft(userIds[j]);
             }
         }
 
+        console.log(`Minted ${count} nfts`)
     } catch (err) {
         console.log(err)
     }

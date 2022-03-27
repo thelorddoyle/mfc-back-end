@@ -92,4 +92,40 @@ describe('Finds the first empty fight slot within multiple tournaments', () => {
     it('should return the fight obj with empty nfts', function (){
         assert.deepEqual(findEmptyFight(roundTournaments), {nfts: [], fightIndex: 0} )
     })
+
+    const roundTournaments2 = [
+        {fights: [
+            {
+                nfts: [0, 0]
+            },
+            {
+                nfts: [0, 0]
+            },
+            {
+                nfts: [0]
+            },
+            {
+                nfts: [0],
+                fightIndex: 0
+            }
+        ]},
+        {fights: [
+            {
+                nfts: [],
+                fightIndex: 1
+            },
+            {
+                nfts: [0, 0]
+            },
+            {
+                nfts: [0]
+            },
+            {
+                nfts: []
+            }
+        ]}
+    ]
+    it('should return the fight obj with empty nfts & fightIndex 1', function (){
+        assert.deepEqual(findEmptyFight(roundTournaments2), {nfts: [], fightIndex: 1} )
+    })
 });
