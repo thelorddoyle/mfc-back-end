@@ -178,6 +178,7 @@ module.exports = {
             try {
                 let nfts = await Nft.find().populate('fights')
                 nfts = addWins(nfts);
+                // perform the sort of the backend nfts 
                 return nfts
             } catch (error) {
                 
