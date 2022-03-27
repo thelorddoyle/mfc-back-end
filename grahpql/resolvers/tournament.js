@@ -11,6 +11,25 @@ const getWinnerAndLoser = function (nft1, nft2) {
     return Math.random() < 0.5 ? [nft1, nft2] : [nft2, nft1];
 };
 
+const addFightToNft = async (fight, nft) => {
+    try {
+    
+        nft.fights.push(fight.id);
+        await nft.save();
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const addNftToFight = async (nft, fight) => {
+    try {
+        fight.nfts.push(nft.id);
+        await fight.save();
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 // gets an array of objs that contain the move, the attacker and defender. 
 const getFightReplay = function (nft1, nft2, winner) {
     try {
@@ -96,6 +115,8 @@ module.exports = {
     getCurrentTournament,
     getWinnerAndLoser,
     getTier,
+    addFightToNft,
+    addNftToFight,
     Query: {
         async getTournaments() {
             try {
@@ -168,28 +189,28 @@ module.exports = {
             }
         },
 
+
         async resolveTournament(_, { tournamentId }) {
             try {
+                // find tournament
                 const tournament = await Tournament.findById(tournamentId).populate("fights");
 
                 if(tournament.status !== 'ready') {
                     throw new Error("Tournament is not ready.");
                 }
                 
+                // Loop over fights, determine winner, loser & populate the fightReplay field
                 for ( let i = 0; i < tournament.fights.length; i++ ) {
-                    // Determine winner, loser & populate the fightReplay field
                     const fight = await tournament.fights[i].populate("nfts");
 
                     [fight.winnerId, fight.loserId] = getWinnerAndLoser(fight.nfts[0].id, fight.nfts[1].id);
-
                     let fightReplay = getFightReplay(fight.nfts[0].id, fight.nfts[1].id, fight.winnerId);
                     fight.fightReplay.push(...fightReplay);
                     
                     await fight.save();
-                    
 
-                    // Insert fight into the first availible slot on next tier
                     
+                    // Insert fight into the first availible slot on next tier
                     if (i !== tournament.fights.length - 1) {
                         const nextTier = fight.tier + 1;
 
@@ -200,13 +221,10 @@ module.exports = {
                                 f.nfts.length < 2
                             );
                         });
-                                
-                        nextFight.nfts.push(fight.winnerId);
-                        await nextFight.save();
-
-                        let nft = await Nft.findById(fight.winnerId);
-                        nft.fights.push(nextFight.id);
-                        await nft.save();
+                        
+                        const nft = await Nft.findById(fight.winnerId);
+                        await addFightToNft(nextFight, nft);
+                        await addNftToFight(nft, nextFight);
                         
                     } else {
                         //If last fight update the tournament winnerId and runnerupId & Update Tournament to completed.

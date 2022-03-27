@@ -3,12 +3,26 @@ const { UserInputError } = require("apollo-server");
 
 const checkAuth = require("../../middleware/checkAuth");
 const { validateRemoveAmount } = require("../../helpers/validators");
-const { getCurrentTournament } = require("./tournament");
+const { getCurrentTournament, addFightToNft, addNftToFight} = require("./tournament");
 const { removeAmount } = require('./user');
 const Nft = require("../../models/Nft");
 const Fight = require("../../models/Fight");
 const Tournament = require("../../models/Tournament");
-const tournament = require("./tournament");
+
+// 
+
+const addWins = (nfts) => {
+    return nfts.map(nft => {
+        //calculate the number of wins for each of these nfts. 
+        const wins = nft.fights.reduce((winCount, fight) => {
+            return fight.winnerId === nft.id ? winCount + 1 : winCount;
+        }, 0)
+
+        nft.wins = wins;
+        return nft
+        // add this as a field and return the nft. 
+    }); 
+}
 
 // if tournament tier 1 fights completely filled, then change status to ready
 const isFinalFightFilled = (fights) => {
@@ -28,39 +42,19 @@ const findIfEmptySlotAvailible = (round) => {
     }
 }
 
-const addFightToNft = async (fightId, nftId) => {
-    try {
-        const nft = await Nft.findById(nftId).populate('fights');
-    
-        nft.fights.push(fightId);
-        await nft.save();
-    } catch (error) {
-        console.log(error);
-    }
-}
 
-const addNftToFight = async (nftId, fightId) => {
-    try {
-        const fight = await Fight.findById(fightId).populate('nfts');
 
-        fight.nfts.push(nftId);
-        await fight.save();
-    } catch (error) {
-        console.log(error);
-    }
-}
-
-const insertIntoFirstFight = async (tournament, nftId) => {
+const insertIntoFirstFight = async (tournament, nft) => {
     // generates a callback function that decides if nft can take fight slot. 
     const isEmptySlot = findIfEmptySlotAvailible(tournament.round);
 
     //find first fight with open slot
     const fightWithSlot = tournament.fights.find(fight => isEmptySlot(fight.nfts.length));
     
-    // if fight exists add nftId to fight and fight to nft
+    // if fight exists add nft to fight and fight to nft
     if (fightWithSlot){
-        addFightToNft(fightWithSlot.id, nftId);
-        fightWithSlot.nfts.push(nftId);
+        addFightToNft(fightWithSlot, nft);
+        fightWithSlot.nfts.push(nft);
         fightWithSlot.save();
     
         // update tournament status if ready
@@ -88,22 +82,22 @@ const findEmptyFight = (roundTournaments) => {
 
 }
 
-const putNftIntoAvailibleFights = async function (nftId) {
+const putNftIntoAvailibleFights = async function (nft) {
     try {
         const tournament = await getCurrentTournament();
         await tournament.populate("fights");
         let round = tournament.round + 1;
         const totalNumRounds = 3; //TODO: change the '3' here to however many rounds are intended. 
 
-        await insertIntoFirstFight(tournament, nftId);
+        await insertIntoFirstFight(tournament, nft);
 
         // for every elligible round insert nft into first availible slot
         for (round; round <= totalNumRounds; round++) {
             let roundTournaments = await Tournament.find({ round }).populate("fights");
             const fight = findEmptyFight(roundTournaments);
 
-            await addNftToFight(nftId, fight.id);
-            await addFightToNft(fight.id, nftId);
+            await addFightToNft(fight, nft);
+            await addNftToFight(nft, fight);
         }
     } catch (error) {
         throw new UserInputError(error);
@@ -121,7 +115,7 @@ const mintNft = async (userId) => {
             nft.user = userId;
             await nft.save();
             await nft.populate("user"); // adds the user reference obj
-            await putNftIntoAvailibleFights(nft.id);
+            await putNftIntoAvailibleFights(nft);
             
             return nft;
         } else {
@@ -138,6 +132,7 @@ module.exports = {
     findIfEmptySlotAvailible,
     findEmptyFight,
     putNftIntoAvailibleFights,
+    addWins,
     Query: {
         async getNfts() {
             try {
@@ -177,7 +172,19 @@ module.exports = {
             } catch (error) {
                 throw new Error("Nft not found");
             }
+        },
+
+        async findWins(_, __){
+            try {
+                let nfts = await Nft.find().populate('fights')
+                nfts = addWins(nfts);
+                // perform the sort of the backend nfts 
+                return nfts
+            } catch (error) {
+                
+            }
         }
+        
     },
 
     Mutation: {
@@ -199,5 +206,7 @@ module.exports = {
 
             return await mintNft(id);
         },
+        // returns all nfts ordered by wins, with a win param. 
+
     },
 };
