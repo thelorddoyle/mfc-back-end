@@ -9,6 +9,21 @@ const Nft = require("../../models/Nft");
 const Fight = require("../../models/Fight");
 const Tournament = require("../../models/Tournament");
 
+// 
+
+const addWins = (nfts) => {
+    return nfts.map(nft => {
+        //calculate the number of wins for each of these nfts. 
+        const wins = nft.fights.reduce((winCount, fight) => {
+            return fight.winnerId === nft.id ? winCount + 1 : winCount;
+        }, 0)
+
+        nft.wins = wins;
+        return nft
+        // add this as a field and return the nft. 
+    }); 
+}
+
 // if tournament tier 1 fights completely filled, then change status to ready
 const isFinalFightFilled = (fights) => {
     return fights[15].nfts.length === 2
@@ -117,6 +132,7 @@ module.exports = {
     findIfEmptySlotAvailible,
     findEmptyFight,
     putNftIntoAvailibleFights,
+    addWins,
     Query: {
         async getNfts() {
             try {
@@ -161,16 +177,7 @@ module.exports = {
         async findWins(_, __){
             try {
                 let nfts = await Nft.find().populate('fights')
-                nfts = nfts.map(nft => {
-                    //calculate the number of wins for each of these nfts. 
-                    const wins = nft.fights.reduce((winCount, fight) => {
-                        return fight.winnerId === nft.id ? winCount + 1 : winCount;
-                    }, 0)
-
-                    nft.wins = wins;
-                    return nft
-                    // add this as a field and return the nft. 
-                }); 
+                nfts = addWins(nfts);
                 return nfts
             } catch (error) {
                 
