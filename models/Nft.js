@@ -19,6 +19,10 @@ const nftSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'User'
   },
+  ranking:{
+    type: Schema.Types.ObjectId,
+    ref: 'Ranking'
+  },
   fights:[{
     type: Schema.Types.ObjectId,
     ref: 'Fight'
