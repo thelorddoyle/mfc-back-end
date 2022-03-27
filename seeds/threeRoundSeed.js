@@ -140,34 +140,37 @@ db.once("open", async () => {
                 amountInWallet: 5,
                 createdAt: new Date()
             })
-            console.log(`Created the user: '${username}', password: 'chicken'`);
+            // console.log(`Created the user: '${username}', password: 'chicken'`);
     
             userIds.push(user.id);
         }
         
         // MINTING NFTS
+        let count = 0;
         for(let i = 0; i< 4; i++){
             for (let j = 0; j < 8; j++) {
+                count++
                 await mintNft(userIds[j]);
             }
         }
 
+        console.log(`Minted ${count} nfts`)
     } catch (err) {
         console.log(err)
     }
 
-    //LOGIN TO TEST ACCOUNT:
-    try {
-        const login = generateToken({
-            username: "test",
-            password: "password",
-        });
+    //LOGIN TO LAURENCE ACCOUNT:
+    // try {
+    //     const login = generateToken({
+    //         username: "laurence",
+    //         password: "chicken",
+    //     });
 
-        console.log("Logged in to 'test'");
-        console.log("login token:", login, "(MAY NOT BE A VALID TOKEN)");
-    } catch (err) {
-        console.log(err);
-    }
+    //     console.log("Logged in to 'laurence'");
+    //     console.log("login token:", login, "(MAY NOT BE A VALID TOKEN)");
+    // } catch (err) {
+    //     console.log(err);
+    // }
 
     process.exit(0); // exits the node mode after seeding.
 });

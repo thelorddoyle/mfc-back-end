@@ -1,6 +1,6 @@
 const chai = require('chai');
 const assert = require('assert');
-const {isFinalFightFilled, findIfEmptySlotAvailible} = require('../grahpql/resolvers/nft');
+const {isFinalFightFilled, findIfEmptySlotAvailible, findEmptyFight} = require('../grahpql/resolvers/nft');
 
 describe('check if Final Fight filled returning correct response', () => {
     it('Should return true', function (){
@@ -53,5 +53,79 @@ describe('Finds first empty slot', () => {
     })
     it('should return false if 2 slots filled', function (){
         assert.equal(isFinalFightFilled(2), false )
+    })
+});
+
+describe('Finds the first empty fight slot within multiple tournaments', () => {
+    const roundTournaments = [
+        {fights: [
+            {
+                nfts: [0, 0]
+            },
+            {
+                nfts: [0, 0]
+            },
+            {
+                nfts: [0]
+            },
+            {
+                nfts: [],
+                fightIndex: 0
+            }
+        ]},
+        {fights: [
+            {
+                nfts: [0, 0]
+            },
+            {
+                nfts: [0, 0]
+            },
+            {
+                nfts: [0]
+            },
+            {
+                nfts: []
+            }
+        ]}
+    ]
+    
+    it('should return the fight obj with empty nfts', function (){
+        assert.deepEqual(findEmptyFight(roundTournaments), {nfts: [], fightIndex: 0} )
+    })
+
+    const roundTournaments2 = [
+        {fights: [
+            {
+                nfts: [0, 0]
+            },
+            {
+                nfts: [0, 0]
+            },
+            {
+                nfts: [0]
+            },
+            {
+                nfts: [0],
+                fightIndex: 0
+            }
+        ]},
+        {fights: [
+            {
+                nfts: [],
+                fightIndex: 1
+            },
+            {
+                nfts: [0, 0]
+            },
+            {
+                nfts: [0]
+            },
+            {
+                nfts: []
+            }
+        ]}
+    ]
+    it('should return the fight obj with empty nfts & fightIndex 1', function (){
+        assert.deepEqual(findEmptyFight(roundTournaments2), {nfts: [], fightIndex: 1} )
     })
 });
