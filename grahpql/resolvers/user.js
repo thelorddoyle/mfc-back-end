@@ -227,39 +227,51 @@ module.exports = {
 
         // validates a change in email, username
         async updateUser(_, { user }, context) {
+            console.log(user);
             const { id } = checkAuth(context);
             const currentUser = await User.findOne({ id });
             const { email, username } = user; //NOTE: id is userId and email and username are the new values(to update to).
-            const { errors, valid } = await validateUserUpdate(
+            const { errors, valid, values } = await validateUserUpdate(
                 email,
                 username,
                 currentUser
             );
-            
             if (!valid) throw new UserInputError("Errors", { errors });
-            Object.assign(currentUser, user); //changes only the
-            currentUser.save();
-            return currentUser;
+
+            //We only save the value that was sent or both
+            Object.assign(currentUser, values);
+            result = await currentUser.save();
+
+            //We generate a new session for the user
+            const token = generateToken(currentUser);
+            return {
+                ...result._doc,
+                id: result.id,
+                token,
+            }
         },
 
+
+        
         async updatePassword(_,{ user }, context){
-                const { id } = checkAuth(context);
-                //Find user
-                const currentUser =  await User.findById(id);
-                //Destructing parameters
-                const { currentPassowrd, password, confirmPassword } = user;
+            const { id } = checkAuth(context);
+            //Find user
+            const currentUser =  await User.findById(id);
+            console.log(currentUser);
+            //Destructing parameters
+            
+            const { currentPassword, password, confirmPassword } = user;
+            //Validate password and current match, plus input fields
+            const {errors, valid } =  await  validateUpdatePassowrd(currentUser.password, currentPassword, password, confirmPassword)
+            if (!valid) throw new UserInputError("Errors", { errors }); 
+            //Hashing new password
+            const newPassword =  await bcrypt.hash(password, 12);
 
-                //Validate password and current match, plus input fields
-                const {errors, valid }=  await  validateUpdatePassowrd(currentUser.password, currentPassowrd, password, confirmPassword)
-                if (!valid) throw new UserInputError("Errors", { errors }); 
-                //Hashing new password
-                const newPassword =  await bcrypt.hash(password, 12);
-
-                //Updating user password
-                currentUser.password = newPassword;
-                await currentUser.save()
-
-                return currentUser;
+            //Updating user password
+            currentUser.password = newPassword;
+            await currentUser.save()
+            return currentUser;
+               
 
         },
 

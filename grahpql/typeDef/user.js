@@ -13,10 +13,9 @@ module.exports = gql`
     },
 
     type Result{ # from deleting 
-
         deletedCount: Int!  
-      
     },
+
 
     input UserInput { #User model type
         email: String
@@ -25,9 +24,9 @@ module.exports = gql`
     },
 
     input UserUpdatePassowrd{
-        currentPassowrd: String!
-        password: String!
-        confirmPassword: String!  
+        currentPassword: String
+        password: String
+        confirmPassword: String
     }
 
     input RegisterInput{ #Diferent "type" for handling form data 
@@ -56,7 +55,7 @@ module.exports = gql`
 		addAmount(userId: ID!, amount: Float!): User!,
 		removeAmount(amount: Float!): User!,
 		updateUser(user: UserInput): User!,
-        updatePassword(user: UserUpdatePassowrd): User!
+        updatePassword(user: UserUpdatePassowrd): User,
 		deleteUser(userId: ID!): Result!
         
 	}
