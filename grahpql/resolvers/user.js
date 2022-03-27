@@ -251,8 +251,6 @@ module.exports = {
             }
         },
 
-
-        
         async updatePassword(_,{ user }, context){
             const { id } = checkAuth(context);
             //Find user
@@ -293,9 +291,7 @@ module.exports = {
         async addAmount(_, { userId ,amount }, context) {
             // NOTE: this will probably be swapped out for defi integration.
             // const { id } = checkAuth(context);
-            
             return await addAmount(userId, amount);
-
             
         },
 

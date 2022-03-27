@@ -3,12 +3,11 @@ const { UserInputError } = require("apollo-server");
 
 const checkAuth = require("../../middleware/checkAuth");
 const { validateRemoveAmount } = require("../../helpers/validators");
-const { getCurrentTournament } = require("./tournament");
+const { getCurrentTournament, addFightToNft, addNftToFight} = require("./tournament");
 const { removeAmount } = require('./user');
 const Nft = require("../../models/Nft");
 const Fight = require("../../models/Fight");
 const Tournament = require("../../models/Tournament");
-const tournament = require("./tournament");
 
 // if tournament tier 1 fights completely filled, then change status to ready
 const isFinalFightFilled = (fights) => {
@@ -28,24 +27,7 @@ const findIfEmptySlotAvailible = (round) => {
     }
 }
 
-const addFightToNft = async (fight, nft) => {
-    try {
-    
-        nft.fights.push(fight.id);
-        await nft.save();
-    } catch (error) {
-        console.log(error);
-    }
-}
 
-const addNftToFight = async (nft, fight) => {
-    try {
-        fight.nfts.push(nft.id);
-        await fight.save();
-    } catch (error) {
-        console.log(error);
-    }
-}
 
 const insertIntoFirstFight = async (tournament, nft) => {
     // generates a callback function that decides if nft can take fight slot. 
@@ -135,8 +117,6 @@ module.exports = {
     findIfEmptySlotAvailible,
     findEmptyFight,
     putNftIntoAvailibleFights,
-    addFightToNft,
-    addNftToFight,
     Query: {
         async getNfts() {
             try {
@@ -176,7 +156,27 @@ module.exports = {
             } catch (error) {
                 throw new Error("Nft not found");
             }
+        },
+
+        async findWins(_, __){
+            try {
+                let nfts = await Nft.find().populate('fights')
+                nfts = nfts.map(nft => {
+                    //calculate the number of wins for each of these nfts. 
+                    const wins = nft.fights.reduce((winCount, fight) => {
+                        return fight.winnerId === nft.id ? winCount + 1 : winCount;
+                    }, 0)
+
+                    nft.wins = wins;
+                    return nft
+                    // add this as a field and return the nft. 
+                }); 
+                return nfts
+            } catch (error) {
+                
+            }
         }
+        
     },
 
     Mutation: {
@@ -198,5 +198,7 @@ module.exports = {
 
             return await mintNft(id);
         },
+        // returns all nfts ordered by wins, with a win param. 
+
     },
 };
