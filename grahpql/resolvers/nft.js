@@ -24,6 +24,12 @@ const addWins = (nfts) => {
     }); 
 }
 
+const sortByWins = (nfts) => {
+    return nfts.sort((fight1, fight2) => {
+        return fight2.wins - fight1.wins
+    })
+}
+
 // if tournament tier 1 fights completely filled, then change status to ready
 const isFinalFightFilled = (fights) => {
     return fights[15].nfts.length === 2
@@ -42,12 +48,9 @@ const findIfEmptySlotAvailible = (round) => {
     }
 }
 
-
-
 const insertIntoFirstFight = async (tournament, nft) => {
     // generates a callback function that decides if nft can take fight slot. 
     const isEmptySlot = findIfEmptySlotAvailible(tournament.round);
-
     //find first fight with open slot
     const fightWithSlot = tournament.fights.find(fight => isEmptySlot(fight.nfts.length));
     
@@ -178,10 +181,11 @@ module.exports = {
             try {
                 let nfts = await Nft.find().populate('fights')
                 nfts = addWins(nfts);
+                nfts = sortByWins(nfts);
                 // perform the sort of the backend nfts 
                 return nfts
             } catch (error) {
-                
+                throw UserInputError(error)
             }
         }
         
