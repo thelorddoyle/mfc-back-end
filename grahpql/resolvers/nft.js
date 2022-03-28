@@ -180,7 +180,6 @@ module.exports = {
         async findWins(_, __){
             try {
                 let nfts = await Nft.find( {user: { $exists: true}}).populate('fights').populate('user') // get list of nfts that are owned. 
-                console.log('nfts:', nfts);
                 nfts = addWins(nfts);
                 nfts = sortByWins(nfts);
                 // perform the sort of the backend nfts 
