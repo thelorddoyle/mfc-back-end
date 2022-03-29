@@ -29,7 +29,7 @@ const image = ["https://res.cloudinary.com/metaverse-fc/image/upload/v1647771047
 "https://res.cloudinary.com/metaverse-fc/image/upload/v1647771046/NFTs/card2_xmnadb.jpg",
 "https://res.cloudinary.com/metaverse-fc/image/upload/v1647771046/NFTs/card1_nvag4n.jpg"]
 
-const usernames = ["Test", "Jesus", "Dan", "Alex", "Steve", "Cam", "Rowena", "Jia"]
+const usernames = ["test", "jesus", "dan", "alex", "steve", "cam", "rowena", "jia"]
 
 const selectRandomElement = function (array) {
     return array[
