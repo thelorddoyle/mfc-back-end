@@ -2,6 +2,10 @@
 const User = require('../models/User');
 const bcrypt = require("bcryptjs");
 
+function checkURL(url) {
+    return(url.match(/\.(jpeg|jpg|gif|png)$/) != null);
+}
+
 // performs the regex check to see if email meets regex requirements
 const emailIsNotValid = (email) => {
     const regEx =
@@ -13,10 +17,9 @@ const usernameIsInUse = async (username) => {
     return await User.findOne({username});
 } 
 
-
-const validateUserUpdate = async (email = null, username = null , currentUser) => {
+const validateUserUpdate = async (email = null, username = null, profileImage = null, currentUser) => {
     // foreach of the values you want to send through check if they are different only send through the actual differences. 
-    const {email: currentEmail , username: currentUsername } = currentUser; 
+    const {email: currentEmail , username: currentUsername, profileImage: currentProfileImage } = currentUser; 
     const errors = {};
     const values = {};
     
@@ -43,6 +46,13 @@ const validateUserUpdate = async (email = null, username = null , currentUser) =
             values.username = username
          }
     }
+    if(profileImage !== null && profileImage.trim() !== ""){
+        if (!checkURL(profileImage)) {
+            errors.profileImage = "Profile image must be an image"
+        } else {
+            values.profileImage = profileImage
+        }
+    }
     
     return {
         errors,
@@ -68,7 +78,7 @@ const validateUpdatePassowrd = async (userPassword, currentPassword, password, c
     };
 }
 
-const validateUser = async (username, email, password, confirmPassword) => {
+const validateUser = async (username, password, confirmPassword, email, profileImage) => {
     const errors = {};
 
     if (username.trim() === "") {
@@ -88,6 +98,10 @@ const validateUser = async (username, email, password, confirmPassword) => {
         errors.password = "Password must not be empty";
     } else if (password !== confirmPassword) {
         errors.confirmPassword = "Passwords must match";
+    }
+
+    if (profileImage === undefined) {
+        profileImage = 'https://res.cloudinary.com/metaverse-fc/image/upload/c_scale,w_200/v1647822682/Logos%20And%20Icons/Fighters_nuxtbz.png'
     }
 
     return {

@@ -10,6 +10,7 @@ module.exports = gql`
         username: String!
         createdAt: Date!
         amountInWallet: Float
+        profileImage: String
     },
 
     type Result{ # from deleting 
@@ -20,7 +21,7 @@ module.exports = gql`
     input UserInput { #User model type
         email: String
         username: String
-        
+        profileImage: String
     },
 
     input UserUpdatePassowrd{
@@ -35,7 +36,8 @@ module.exports = gql`
         password: String!,
         confirmPassword: String!,
         email: String!,
-        amountInWallet: Float
+        amountInWallet: Float,
+        profileImage: String
     }, 
 
 	type Query{
@@ -56,7 +58,7 @@ module.exports = gql`
 		removeAmount(amount: Float!): User!,
 		updateUser(user: UserInput): User!,
         updatePassword(user: UserUpdatePassowrd): User,
-		deleteUser(userId: ID!): Result!
+		deleteUser(userId: ID!): Result!,
         
 	}
 `

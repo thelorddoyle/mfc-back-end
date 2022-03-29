@@ -196,13 +196,17 @@ module.exports = {
             };
         },
 
-        async register(_, { registerInput: { username, email, password, confirmPassword } }) {
+        async register(_, { registerInput: { username, password, confirmPassword, email, profileImage } }) {
             const { errors, valid } = await validateUser(
                 username,
-                email,
                 password,
-                confirmPassword
+                confirmPassword,
+                email,
+                profileImage
             );
+
+            console.log('I am trying to register a user.')
+            console.log(`The details I have are: ${username, email}`)
 
             if (!valid) throw new UserInputError("Errors", { errors }); //If any errors we throw an exception
 
@@ -212,6 +216,7 @@ module.exports = {
                 username,
                 password,
                 createdAt: new Date(),
+                profileImage
             });
             const result = await newUser.save(); //TODO: refactor this to use User.create()
 
@@ -225,15 +230,16 @@ module.exports = {
             };
         },
 
-        // validates a change in email, username
+        // validates a change in email, username, profileImage
         async updateUser(_, { user }, context) {
             console.log(user);
             const { id } = checkAuth(context);
             const currentUser = await User.findOne({ id });
-            const { email, username } = user; //NOTE: id is userId and email and username are the new values(to update to).
+            const { email, username, profileImage } = user; //NOTE: id is userId and email and username are the new values(to update to).
             const { errors, valid, values } = await validateUserUpdate(
                 email,
                 username,
+                profileImage,
                 currentUser
             );
             if (!valid) throw new UserInputError("Errors", { errors });
