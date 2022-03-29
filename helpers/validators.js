@@ -100,8 +100,12 @@ const validateUser = async (username, password, confirmPassword, email, profileI
         errors.confirmPassword = "Passwords must match";
     }
 
-    if (profileImage === undefined) {
+    if (profileImage === undefined || profileImage === null || profileImage === "") {
         profileImage = 'https://res.cloudinary.com/metaverse-fc/image/upload/c_scale,w_200/v1647822682/Logos%20And%20Icons/Fighters_nuxtbz.png'
+    } else {
+        if (!checkURL(profileImage)) {
+            errors.profileImage = "Profile image must be an image"
+        }
     }
 
     return {
