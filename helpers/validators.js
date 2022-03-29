@@ -117,7 +117,7 @@ const validateUser = async (username, password, confirmPassword, email, profileI
 const validateLogin = (username, password) => {
     const errors = {};
     if (username.trim() === "") {
-        errors.username = "Password must not be empty";
+        errors.username = "Username must not be empty";
     }
     if (password.trim() === "") {
         errors.password = "Password must not be empty";
